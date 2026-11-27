@@ -230,9 +230,7 @@ The current PSC repository describes a local-first, provider-neutral coordinatio
 
 **Hosted-service boundary**
 
-The initial integration target is PSC's shared coordination and provider-neutral synchronization model, not a mandatory centrally operated server. The exact runtime/deployment model (in-process library, platform adapter, local companion service, optional hosted coordinator, or a combination) remains an architecture question for the PSC project.
-
-A future hosted PSC capability, content relay, shared identity service, notification service, or managed storage option must be evaluated as a separate capability. It requires explicit approval of its data flows, tenancy/isolation model, authentication and authorization, operational costs, availability, retention/deletion, backup/recovery, and encryption design. It must not silently turn PSC into the default plaintext store for notes or unrelated app data, and it must not remove the local-only or user-controlled-provider path.
+PSC is permanently decentralized and provider-based. It will not operate a centrally hosted backend, first-party content relay, managed storage service, or mandatory cloud account. Its coordination logic runs in the applications and/or user-controlled devices as defined by the approved technical design; data moves through providers or folders selected and controlled by the user. Optional services operated by unrelated providers remain external dependencies, not a PSC-owned cloud. Any future proposal to change this is outside the approved direction and requires a new explicit product decision.
 
 **Privacy and availability requirements**
 
@@ -244,10 +242,19 @@ A future hosted PSC capability, content relay, shared identity service, notifica
 
 Before Commonplace depends on PSC, its repository must publish an accepted integration contract and a tested proof of concept for the required provider/platform path. See the [PSC project](https://github.com/INFORMATION89/Personal-Systems-Coordinator) for its current research, principles, and unresolved decisions.
 
-## 7. Native implementation and Motion
+## 7. Native implementation and platform-specific UI
 
-- Build native app surfaces for each supported platform; do not ship a single generic web UI inside platform shells and call it native.
-- Choose platform frameworks based on the actual target: for example, SwiftUI/AppKit on Apple platforms, Jetpack Compose on Android, and WinUI on Windows.
+Native applications are a non-negotiable product constraint. **Do not use Electron**, Chromium-based desktop wrappers, or a web application inside a native shell as a substitute for native apps.
+
+Use the platform's own UI framework and design language:
+
+- **Android:** Jetpack Compose with Motion UI and Material You/Material 3. Motion UI is an Android-specific library; do not treat it as a cross-platform UI toolkit.
+- **Windows:** WinUI 3.
+- **macOS:** SwiftUI, using AppKit interop only where a genuine platform capability requires it.
+- **iOS (when scheduled):** SwiftUI is the proposed native direction; confirm platform-specific requirements during its architecture spike.
+- **Linux:** native toolkit/framework remains an open decision; evaluate GTK 4/libadwaita and other desktop-native options rather than Electron.
+
+Shared product behavior, domain rules, data formats, and synchronization contracts must not force identical UI. Each app implements native controls, navigation, menus, text input, accessibility, notifications, windowing, file access, and system integration for its platform.
 - Use native text input, file access, menus, notifications, haptics, accessibility, windowing, and navigation.
 - Keep product and data contracts consistent across apps; visual and interaction implementations may differ.
 - Prefer standard platform components for ordinary controls. Do not create a custom replacement for every standard button, text field, tab, menu, or notification.
@@ -293,7 +300,10 @@ This is a suggested sequence, not a committed calendar. Dates should be set only
 ### Phase 0 — Product and architecture definition
 
 - Approve the Markdown dialect, frontmatter schema, file/asset layout, and workspace-metadata boundary.
-- Choose the first platform and establish its native application shell.
+- Confirm desktop-first development. Keep the first desktop operating system explicitly undecided until platform feasibility spikes and development constraints are compared.
+- Define the native UI architecture and platform boundaries for Windows (WinUI 3), macOS (SwiftUI), Android (Jetpack Compose + Motion UI + Material You), and future iOS (SwiftUI); identify the Linux native UI decision as open if Linux remains in the supported matrix.
+- Compare viable shared-core approaches without selecting a UI framework that erases native platform behavior. Prototype the core/domain boundary and native bindings on the candidate desktop platforms before committing to a language/runtime.
+- Choose the first desktop platform only after the comparison and establish its native application shell.
 - Prototype the editor and canvas independently.
 - Review the PSC repository and agree the Commonplace/PSC responsibility boundary, including data ownership, provider adapters, versioned contracts, authorization, and offline fallback.
 - Map the Commonplace data categories that may be synchronized through PSC; document what remains local and what requires separate opt-in.
@@ -303,11 +313,11 @@ This is a suggested sequence, not a committed calendar. Dates should be set only
 - Decide what the first shared-group model means.
 - Record provider, privacy, security, and licensing decisions.
 
-**Exit:** architecture decisions are written, the PSC boundary and unresolved deployment choices are documented, critical risks have small working prototypes, and the first milestone has measurable acceptance criteria.
+**Exit:** architecture decisions are written, PSC's permanently decentralized boundary is documented, the desktop-first/native architecture is validated by small prototypes, the first desktop OS is selected with evidence, and the first milestone has measurable acceptance criteria.
 
 ### Phase 1 — Local-first MVP / internal alpha
 
-- Native app shell for the first approved platform.
+- Native app shell for the first approved desktop platform, implemented with its native framework (WinUI 3 or SwiftUI according to the approved first target).
 - Create, edit, rename, move, archive, and delete Markdown notes.
 - Live-rendering Markdown editor.
 - Local persistence and search.
@@ -336,7 +346,7 @@ This is a suggested sequence, not a committed calendar. Dates should be set only
 ### Phase 3 — Public beta
 
 - Complete the agreed first-platform experience.
-- Add the second approved platform with native controls.
+- Add the next approved platform with its own native UI implementation; do not port a web UI or wrap the first platform's interface.
 - Harden cloud-provider behavior, account disconnect, credential revocation, backup, and deletion.
 - Add group-space access model and invitations if approved.
 - Add shopping-list type and its item index.
