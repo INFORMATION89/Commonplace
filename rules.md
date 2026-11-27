@@ -29,7 +29,16 @@ Do not invent requirements. A proposal in a draft plan is not an approved archit
 6. AI is an optional capability. Core writing, organization, search, reminders, and offline access must not depend on an AI provider.
 7. Keep product-specific content, branding, and domain rules out of shared libraries such as Motion.
 
-## 3. Markdown and data integrity
+## 3. Business model flexibility
+
+1. Do not assume Commonplace must be free, ad-supported, or freemium. A paid app or other paid model remains a valid future direction.
+2. Do not choose pricing, billing cadence, tiers, or paid/free feature boundaries during routine implementation. Record those as product decisions when there is sufficient cost and market evidence.
+3. Do not add ads, tracking, sale of user data, artificial engagement loops, or degraded privacy as monetization mechanisms.
+4. Paid features must not make ordinary Markdown content inaccessible, non-exportable, or dependent on continued payment to retrieve.
+5. Do not build a proprietary backend or subscription enforcement before there is a justified service requirement and an approved business model.
+6. Distinguish app purchase revenue from recurring infrastructure and AI-provider costs. Do not silently subsidize unbounded per-user usage.
+
+## 4. Markdown and data integrity
 
 1. Plain Markdown files are the durable source of truth for ordinary note content.
 2. Do not silently convert notes into a proprietary binary or database-only format.
@@ -42,7 +51,7 @@ Do not invent requirements. A proposal in a draft plan is not an approved archit
 9. Any format or schema migration must be versioned, tested against old data, recoverable, and documented.
 10. Never overwrite a note merely because one copy has a later wall-clock timestamp. Detect concurrent edits and preserve the conflicting content for resolution.
 
-## 4. Local-first, sync, and storage
+## 5. Local-first, sync, and storage
 
 1. Ordinary note creation, reading, editing, search, and navigation must work offline.
 2. Local writes must be durable before background synchronization begins.
@@ -59,7 +68,7 @@ Do not invent requirements. A proposal in a draft plan is not an approved archit
 13. Do not introduce a server just to avoid defining synchronization semantics. If a server is proposed for sharing or realtime collaboration, document data flows, threat model, operational cost, and alternatives first.
 14. Never log credentials, tokens, note contents, attachment contents, personal URLs, or sensitive metadata.
 
-## 5. Privacy, location, and sharing
+## 6. Privacy, location, and sharing
 
 1. No analytics, telemetry, tracking, advertising identifiers, or background content uploads by default.
 2. Do not collect location unless the user enables a feature that needs it and the permission disclosure describes why and when it is used.
@@ -72,7 +81,7 @@ Do not invent requirements. A proposal in a draft plan is not an approved archit
 9. Include deletion and account/space exit behavior in every sharing design.
 10. Document what is stored locally, what is sent to a provider, and what other group members can see.
 
-## 6. Native platform experience
+## 7. Native platform experience
 
 1. Each supported app must use its platform's native UI framework and standard interaction model.
 2. Use native text input, menus, file access, notifications, accessibility, keyboard handling, window management, and navigation.
@@ -83,7 +92,7 @@ Do not invent requirements. A proposal in a draft plan is not an approved archit
 7. Do not claim a platform is supported until build, test, accessibility, distribution, and real-platform validation exist.
 8. A web view wrapped in a native shell is not automatically a native implementation.
 
-## 7. Motion and tactile interaction
+## 8. Motion and tactile interaction
 
 1. Motion must improve feedback, hierarchy, spatial continuity, or discoverability.
 2. Interaction must remain responsive and interruptible. New input must not be swallowed by an unrelated animation.
@@ -96,7 +105,7 @@ Do not invent requirements. A proposal in a draft plan is not an approved archit
 9. On other platforms, use native animation and interaction APIs until an independently validated compatible implementation exists.
 10. Do not place Commonplace-specific screens, brand tokens, or data models inside Motion.
 
-## 8. AI inside the product
+## 9. AI inside the product
 
 1. AI access to a user's notes must be off until the user explicitly connects or invokes an AI feature.
 2. Make the scope visible before an AI request: selected notes, selected group, or a specific search result.
@@ -112,7 +121,7 @@ Do not invent requirements. A proposal in a draft plan is not an approved archit
 
 Follow [AI_USAGE_POLICY.md](AI_USAGE_POLICY.md) for model selection, token economy, cost limits, agent workflow, and paid-service rules.
 
-## 9. Dependencies and standard libraries
+## 10. Dependencies and standard libraries
 
 1. Prefer operating-system frameworks, language standard libraries, and dependencies already present in the platform project.
 2. Before adding a dependency, explain the precise gap, alternatives, maintenance health, security posture, license, supported platforms, binary size, runtime cost, and migration cost.
@@ -122,7 +131,7 @@ Follow [AI_USAGE_POLICY.md](AI_USAGE_POLICY.md) for model selection, token econo
 6. Pin versions and use reproducible builds.
 7. Recheck licenses and notices before shipping bundled code.
 
-## 10. Testing and verification
+## 11. Testing and verification
 
 Tests must protect user data and observable behavior, not internal implementation details alone.
 
@@ -146,7 +155,7 @@ Use deterministic fixtures for ordinary tests. Network-dependent tests must be e
 
 A passing build is not proof of sync safety, accessibility, or device behavior. Report exactly what was tested and what remains unverified.
 
-## 11. Documentation and decisions
+## 12. Documentation and decisions
 
 1. Maintain one source of truth for each category of information.
 2. The pre-plan expresses product direction; decision records capture approved decisions; feature specifications define behavior and acceptance; roadmap/handoff documents track work.
@@ -156,7 +165,7 @@ A passing build is not proof of sync safety, accessibility, or device behavior. 
 6. Do not let contradictory documents remain equally authoritative.
 7. Keep handoffs concise and actionable: current status, decisions, branch/commit, changed files, commands/results, risks, and next step.
 
-## 12. Git and delivery
+## 13. Git and delivery
 
 1. Work on a focused feature branch and use pull requests for changes.
 2. Keep commits cohesive and explain their purpose.
@@ -167,7 +176,7 @@ A passing build is not proof of sync safety, accessibility, or device behavior. 
 7. Inspect the full diff, not only the summary generated by an AI agent.
 8. Do not merge a risky data or sync change solely because an agent says it is correct.
 
-## 13. Definition of done
+## 14. Definition of done
 
 A task is complete only when:
 
