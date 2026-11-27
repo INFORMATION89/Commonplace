@@ -252,7 +252,7 @@ Use the platform's own UI framework and design language:
 - **Windows:** WinUI 3.
 - **macOS:** SwiftUI, using AppKit interop only where a genuine platform capability requires it.
 - **iOS (when scheduled):** SwiftUI is the proposed native direction; confirm platform-specific requirements during its architecture spike.
-- **Linux:** native toolkit/framework remains an open decision; evaluate GTK 4/libadwaita and other desktop-native options rather than Electron.
+- **Linux:** native toolkit/framework remains an open decision; evaluate GTK 4/libadwaita and other desktop-native options rather than Electron. Linux synchronization is conditional: prove that reliable, maintainable sync is feasible; otherwise exclude Linux from the supported sync matrix. A possible local-only Linux app is a separate decision.
 
 Shared product behavior, domain rules, data formats, and synchronization contracts must not force identical UI. Each app implements native controls, navigation, menus, text input, accessibility, notifications, windowing, file access, and system integration for its platform.
 - Use native text input, file access, menus, notifications, haptics, accessibility, windowing, and navigation.
@@ -301,6 +301,7 @@ This is a suggested sequence, not a committed calendar. Dates should be set only
 
 - Approve the Markdown dialect, frontmatter schema, file/asset layout, and workspace-metadata boundary.
 - Confirm desktop-first development. Keep the first desktop operating system explicitly undecided until platform feasibility spikes and development constraints are compared.
+- Run a focused Linux synchronization feasibility spike. If reliable, maintainable synchronization would require disproportionate effort or compromise other platforms, remove Linux from the supported sync matrix; consider a local-only Linux app separately only if it has sufficient product value.
 - Define the native UI architecture and platform boundaries for Windows (WinUI 3), macOS (SwiftUI), Android (Jetpack Compose + Motion UI + Material You), and future iOS (SwiftUI); identify the Linux native UI decision as open if Linux remains in the supported matrix.
 - Compare viable shared-core approaches without selecting a UI framework that erases native platform behavior. Prototype the core/domain boundary and native bindings on the candidate desktop platforms before committing to a language/runtime.
 - Choose the first desktop OS only after the comparison and establish its native application shell.
@@ -424,7 +425,7 @@ The license selected for Commonplace's own code is a separate decision from the 
 Do not silently decide these during implementation:
 
 1. **First desktop OS:** Windows or macOS. Desktop-first is confirmed, but the first desktop operating system remains undecided pending native architecture and feasibility prototypes.
-2. **Full platform matrix:** confirm whether iOS, Android, macOS, Windows, Linux, and web are all intended targets, and in what order.
+2. **Full platform matrix:** confirm whether iOS, Android, macOS, Windows, Linux, and web are all intended targets, and in what order. Linux sync is conditional and may be dropped if its feasibility spike shows disproportionate complexity or maintenance; a local-only Linux app is a separate decision.
 3. **First sync destination/provider behind PSC:** user-selected local/provider folder, Google Drive API, Apple-native iCloud document access, or another provider. PSC is the shared coordination/integration layer, not a substitute for choosing and validating the storage destination.
 4. **Shared spaces:** read-only sharing, invite-based shared folders, asynchronous multi-writer edits, or real-time collaboration.
 5. **End-to-end encryption:** whether content must be encrypted before upload, and how this affects search, thumbnails, group access, and account recovery.
