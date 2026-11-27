@@ -213,3 +213,122 @@ Do not assume that the app must be free or freemium. Equally, do not build subsc
 This is a source-backed product/technical comparison, not a complete code audit of Craft, Obsidian, or Konode. Craft's marketing and pricing pages describe current product capabilities but are not a substitute for testing the apps. Konode's source code demonstrates one implementation and its own design constraints, not a universal best practice.
 
 Recheck third-party features, APIs, prices, OAuth scopes, terms, and platform capabilities before implementation because they can change.
+
+
+## 9. Native editor foundations: platform-specific findings
+
+The editor is one of the highest-risk parts of the product. The official platform documentation points to useful native foundations, but none of the simple high-level controls should be assumed to provide the complete Obsidian-style Live Preview behavior without custom work.
+
+| Platform | Documented native foundation | Preliminary implication |
+|---|---|---|
+| iOS | UIKit UITextView / TextKit; SwiftUI TextEditor | UITextView supports multiline text, custom styling, and attributed text. SwiftUI TextEditor is convenient for long-form text but should not be assumed to solve complex inline Markdown editing. |
+| macOS | AppKit NSTextView / TextKit | NSTextView supports rich text, attachments, input management, key bindings, selection, and text interaction. Strong candidate for a desktop editor prototype. |
+| Android | Jetpack Compose state-based TextField and TextFieldState; compare EditText if required | Compose exposes text, selection, buffer editing, and input/output transformations. A Live Preview editor still needs custom range mapping and IME/selection validation. |
+| Windows | WinUI 3 native text controls | The correct control must be selected through a prototype that tests inline formatting, selection, undo/redo, large notes, and keyboard behavior. |
+| Linux | Not yet selected | Research the target desktop environment and native text stack after the first platform is chosen. |
+
+A key implementation constraint: do not repeatedly serialize a rich-text document back to Markdown on every keystroke. Preserve the Markdown source as the durable document and maintain a stable mapping between source ranges and rendered decorations. Unsupported syntax and unknown frontmatter must survive an edit/save cycle.
+
+### Editor proof-of-concept checklist
+
+- Nested headings, emphasis, links, blockquotes, code, lists, task lists, tables, and attachments.
+- Caret movement into and out of formatted ranges.
+- Selection, copy/paste, undo/redo, and keyboard shortcuts.
+- IME composition and input methods.
+- Large-document performance.
+- External file modification and refresh.
+- Unknown syntax/frontmatter round-trip preservation.
+- Accessibility and screen-reader behavior.
+
+References:
+- [Apple UITextView](https://developer.apple.com/documentation/uikit/uitextview/)
+- [Apple NSTextView](https://developer.apple.com/documentation/appkit/nstextview)
+- [SwiftUI TextEditor](https://developer.apple.com/documentation/swiftui/texteditor)
+- [Jetpack Compose text input](https://developer.android.com/develop/ui/compose/text/user-input)
+
+## 10. Native canvas primitives and implications
+
+Official platform guidance confirms that pan/zoom is possible natively, but the primitives and interaction behavior differ:
+
+- **Android:** Compose's transformable gesture modifier detects pan/zoom/rotation. The application still owns the transform state and applies the transform to content.
+- **Windows:** WinUI ScrollView and ScrollViewer support touch/pen panning, optical zoom, configurable zoom bounds, and programmatic zoom.
+- **Apple:** SwiftUI ScrollView supports horizontal/vertical scrolling but does not itself provide zooming. A canvas will need a lower-level native view or a carefully implemented transform layer; validate trackpad, pointer, and touch behavior separately.
+
+This strengthens the recommendation to implement a shared canvas behavior contract but native platform surfaces. Do not assume the same gesture implementation will feel correct on mouse, trackpad, pen, and touch.
+
+References:
+- [Compose pan/zoom/rotation gestures](https://developer.android.com/develop/ui/compose/touch-input/pointer-input/multi-touch)
+- [WinUI scroll, pan, and zoom](https://learn.microsoft.com/en-us/windows/apps/develop/ui/controls/scroll-controls)
+- [SwiftUI ScrollView](https://developer.apple.com/documentation/swiftui/scrollview)
+
+## 11. Provider API findings: important distinctions
+
+### Google Drive
+
+Google's OAuth scope guide describes drive.file as permission to create files and modify files that the user opens with the app or shares with it through Google Picker/file picker. It is not unrestricted access to all Drive files.
+
+The Drive API provides a changes feed with page tokens. It also supports changes.watch notifications; notifications tell the app that the change log may have advanced, after which the app fetches the actual changes. Rate-limit and transient errors should use bounded exponential backoff.
+
+This means Konode's periodic polling is a design choice suited to its no-server extension model, not proof that Google Drive has no change notification capability. A direct client-only Commonplace architecture must still evaluate how it receives notifications and whether a webhook endpoint/server would be required for the watch channel.
+
+References:
+- [Google Drive API scopes](https://developers.google.com/workspace/drive/api/guides/api-specific-auth)
+- [Retrieve Drive changes and notifications](https://developers.google.com/workspace/drive/api/guides/manage-changes)
+- [Drive API error handling](https://developers.google.com/workspace/drive/api/guides/handle-errors)
+
+### iCloud Drive and CloudKit
+
+These must remain separate options:
+
+- FileManager and Apple's document APIs work with iCloud-based documents and user-visible file workflows.
+- Apple's document browser can open files in iCloud Drive and supported third-party file providers.
+- File Provider is for an app/provider that manages and syncs remote documents exposed to other apps.
+- CloudKit stores app data in an app's iCloud containers. CKSyncEngine can manage record synchronization, but its automatic schedule is system-dependent and application code must still handle some record conflicts.
+
+Do not promise a single "iCloud API" that works like Google Drive across iOS, Android, macOS, Windows, and Linux. Apple-native iCloud document access is a platform capability, not a universal provider abstraction.
+
+References:
+- [Apple FileManager and iCloud documents](https://developer.apple.com/documentation/foundation/filemanager)
+- [Apple document browser](https://developer.apple.com/documentation/uikit/building-an-app-with-a-document-browser)
+- [Apple File Provider](https://developer.apple.com/documentation/fileprovider)
+- [Apple CloudKit](https://developer.apple.com/documentation/cloudkit)
+- [Apple CKSyncEngine](https://developer.apple.com/documentation/cloudkit/cksyncengine-5sie5)
+
+## 12. Craft AI/MCP findings
+
+Craft's own product documentation confirms an official MCP endpoint at https://mcp.craft.do/my/mcp. Its setup flow uses OAuth and asks the user to approve a Craft space; connected clients can read, search, and update authorized documents.
+
+Craft also announced MCP v2, bring-your-own-key provider connections, and on-device Apple Foundation Models support in its June 2026 product update. The update explicitly identifies reduced MCP token use as a goal. This is useful precedent for Commonplace's AI economy: smaller tool descriptions, search-first retrieval, scoped context, BYOK, and local inference where available.
+
+Avoid confusing Craft Docs with Craft.io: the latter is a separate product with its own MCP server.
+
+References:
+- [Craft MCP guide](https://www.craft.do/imagine/guide/mcp)
+- [Craft MCP for ChatGPT](https://www.craft.do/imagine/guide/mcp/chatgpt)
+- [Craft June 2026 update: BYOK and MCP v2](https://www.craft.do/blog/craft-update-3-4-4)
+
+## 13. Motion-UI repository verification
+
+The current INFORMATION89/Motion-UI README identifies the project as a Jetpack Compose library, targeting Android 10/API 29 and using JDK 21. It separates Motion Core from an optional Motion UI layer. The README states that the current artifact does not support iOS or desktop targets (Windows, macOS, Linux). It also says Motion UI currently has an app-configurable Material 3 theme/token foundation and that component surfaces are being delivered in later stages.
+
+Recommendation:
+- Use Motion on Android only after a small integration prototype.
+- Pin a tested commit/submodule revision.
+- Use native platform motion APIs elsewhere.
+- Keep Commonplace's product components and branding out of Motion.
+- Do not choose Commonplace's application architecture based on Motion's current platform reach.
+
+Reference:
+- [INFORMATION89/Motion-UI README](https://github.com/INFORMATION89/Motion-UI/blob/main/README.md)
+
+## 14. Recommended proof-of-concept order
+
+1. **Markdown Live Preview editor** on the first chosen platform. Validate text fidelity, caret behavior, IME, undo/redo, accessibility, and large notes.
+2. **Local Markdown file model.** Validate IDs, frontmatter, attachments, import/export, external edits, and recovery.
+3. **Desktop canvas prototype.** Validate pan/zoom, anchor behavior, groups/stacks, keyboard interaction, virtualization, and 500–1,000 synthetic cards.
+4. **Two-device sync.** Use one provider and test offline concurrent edits, partial writes, retries, deletion, restore, and account disconnect.
+5. **Motion/tactility prototype.** Test a small set of interactions on real devices and compare native platform equivalents.
+6. **Read-only MCP prototype.** Expose only selected test notes; validate OAuth, scope, source references, revocation, context limits, and write confirmation.
+
+Do not implement all providers or all platforms before these core risks are understood.
+
