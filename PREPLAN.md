@@ -390,11 +390,36 @@ Use Semantic Versioning once public compatibility promises exist:
 - Keep app release numbers separate from internal milestones where necessary.
 - Any change to Markdown serialization, IDs, workspace metadata, or sync protocol requires migration and rollback planning.
 
-## 12. Business model flexibility
+## 12. Business model flexibility and commercial feasibility
 
-Commonplace may launch as a paid app, a one-time purchase, a paid upgrade, or eventually a subscription/service. The business model is undecided. Keep the option to charge for the app open; do not assume that Commonplace must be free or freemium. Avoid premature payment infrastructure, artificial limits, or infrastructure that would contradict PSC's permanently decentralized model. The shared PSC integration must not force a first-party cloud account or remove the user-controlled-provider/local-only path. Paid status must never remove Markdown portability, export, user access to their files, or privacy controls. AI use and AI provider costs must remain separately disclosed and controlled.
+Commonplace may launch as a paid app, a one-time purchase, a paid upgrade, or eventually a subscription/service. The business model is undecided. Keep the option to charge for the app open; do not assume that Commonplace must be free or freemium. No pricing, billing cadence, tier boundary, or payment provider is approved yet.
 
-## 13. Initial open decisions
+Before committing to a model or building payment infrastructure, produce a documented commercial-feasibility assessment. Compare plausible models against the product's audience, expected value, alternatives, distribution channels and long-term costs. Evaluate, where relevant, paid-up-front licensing, one-time purchase, paid major upgrades, optional subscriptions tied to ongoing value, paid add-ons, and support or business licensing. Do not assume every model is suitable.
+
+The assessment must distinguish one-time development costs from recurring costs and include development and maintenance; security updates; platform-specific testing; customer support and localization; distribution and payment processing fees; refunds and applicable tax/consumer obligations in target markets; third-party API, provider, data, model and AI usage costs; rate limits and price changes; and realistic usage scenarios. Keep external provider costs distinct from PSC-operated infrastructure: PSC will not operate a hosted service, relay, or managed storage to support a revenue model.
+
+Avoid premature payment infrastructure, artificial limits, ads, tracking, data sale, degraded privacy, or infrastructure that would contradict PSC's permanently decentralized model. The shared PSC integration must not force a first-party cloud account or remove the user-controlled-provider/local-only path. Paid status must never remove Markdown portability, export, user access to their files, or privacy controls. AI use and AI provider costs must remain separately disclosed and controlled. Any recurring charge must correspond to a clearly explained ongoing benefit or cost.
+
+## 13. Licensing, third-party resources, and provenance
+
+Licensing and resource eligibility are product and release requirements, not a final packaging task. Do not assume that a resource is free to use, modify, redistribute, or monetize merely because it is publicly accessible, free of charge, open source, AI-generated, or available in a developer tool.
+
+Maintain a resource and license inventory for software and non-software materials used or distributed by Commonplace. It must cover, as applicable: application code, shared libraries, SDKs, frameworks, plugins and build tools; fonts, icons, illustrations, photographs, audio, animations, templates and other visual or sound assets; datasets, sample content, documentation, code examples and copied snippets; APIs, hosted services, storage providers, AI models and model outputs where their terms affect use or distribution.
+
+For each item, record its origin, exact name/version, rights holder where known, license or terms URL, date checked, intended use, modification and redistribution/commercial-use permissions, attribution and notice duties, source-disclosure or copyleft obligations, patent/trademark conditions, usage quotas, fees, and material restrictions. Record uncertainty instead of guessing.
+
+Classify resources as:
+1. **Allowed:** rights and obligations are clear and compatible with the intended use and distribution.
+2. **Allowed with conditions:** usable only after specified attribution, notice, source offer, paid permission, scope restriction, or other obligations are met.
+3. **Prohibited or unresolved:** do not include, ship, train on, or rely on the resource until the rights and terms are clarified.
+
+Check direct and transitive software dependencies. Evaluate license compatibility with both open-source and commercial distribution scenarios, including whether distribution, modification, network use, patent terms, or source disclosure create obligations. Keep required LICENSE, NOTICE, attribution, copyright, and corresponding-source materials with releases. Generate and review a software bill of materials (SBOM) where practical.
+
+Do not copy code, scrape data, use brand assets, or bundle fonts, media, or models based only on availability or attribution. Use official APIs and respect provider terms, rate limits, data-use restrictions and commercial-use rules. For AI-assisted code and generated assets, retain provenance and check applicable tool/model terms; review generated code like any other third-party contribution. Unknown or conflicting rights block distribution until reviewed.
+
+The license selected for Commonplace's own code is a separate decision from the licenses of its dependencies and assets. Do not add a repository license, promise open-source distribution, or adopt a dual-license model without an explicit decision based on commercial, contribution, patent and compatibility implications. Seek qualified legal review for material ambiguity or high-risk distribution decisions.
+
+## 14. Initial open decisions
 
 Do not silently decide these during implementation:
 
@@ -406,13 +431,15 @@ Do not silently decide these during implementation:
 6. **Markdown dialect:** CommonMark/GFM baseline, supported extensions, YAML frontmatter rules, internal links, and attachments.
 7. **Mobile canvas:** full canvas, simplified canvas, or list-first mobile navigation with canvas as an alternate view.
 8. **Shopping-list scope:** whether its first version is just a structured list or also supports store/location and price history.
-9. **Business model:** paid app, one-time purchase, paid upgrade, subscription, or a mix. Preserve the options; do not decide pricing during pre-planning.
-10. **PSC local execution and adapter model:** decide which coordination components belong in each app, which may run as user-controlled local components, and how platform adapters communicate without a central service.
-11. **PSC capability scope:** decide which decentralized capabilities are in scope (for example, provider discovery, device metadata, synchronization status and event routing) and define their local/provider-based contracts.
-12. **PSC content protection:** define encryption, metadata exposure, key recovery, provider/token ownership and revocation for user-selected storage paths. A hosted PSC relay or managed storage service is not an available option.
+9. **Business model and commercial viability:** compare paid app, one-time purchase, paid upgrade, subscription, add-ons, support and other suitable models; assess costs and obligations before selecting one.
+10. **Commonplace and PSC licenses:** choose the license and distribution model for each project's own code only after reviewing business goals, contribution model, dependency compatibility and commercial implications.
+11. **Allowed resource policy:** approve the inventory and rules for code, SDKs, APIs, fonts, icons, media, datasets, AI models, generated outputs and other third-party materials.
+12. **PSC local execution and adapter model:** decide which coordination components belong in each app, which may run as user-controlled local components, and how platform adapters communicate without a central service.
+13. **PSC capability scope:** decide which decentralized capabilities are in scope (for example, provider discovery, device metadata, synchronization status and event routing) and define their local/provider-based contracts.
+14. **PSC content protection:** define encryption, metadata exposure, key recovery, provider/token ownership and revocation for user-selected storage paths. A hosted PSC relay or managed storage service is not an available option.
 
 Record the answers in a decision log before implementing the affected architecture.
 
-## 14. Definition of done for the pre-plan
+## 15. Definition of done for the pre-plan
 
 This pre-plan is complete as a planning baseline only. It does not mean that the application framework, storage protocol, sharing model, or platform list has been selected or implemented. The next milestone is a focused architecture/design spike, not a large speculative code scaffold.
