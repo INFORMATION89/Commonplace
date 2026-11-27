@@ -13,6 +13,10 @@ Pre-planning. The repository is intentionally starting from an empty state; no a
 - [AI usage and cost policy](AI_USAGE_POLICY.md)
 - [Research and feature comparison](docs/RESEARCH.md)
 
+## Product and business direction
+
+Commonplace is being planned as a personal, Markdown-first workspace for notes, reminders, visual organization, and small-group sharing. Its eventual business model is undecided; a paid app remains an explicit option.
+
 ## Product direction
 
 Commonplace treats Markdown files as the durable source of truth, combines an Obsidian-like live-rendering editor with a spatial desktop canvas, and aims to keep data portable and under the user's control.

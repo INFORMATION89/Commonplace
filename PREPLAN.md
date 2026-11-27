@@ -1,0 +1,357 @@
+# Commonplace — Pre-plan
+
+**Status:** Initial pre-plan; proposals are not implementation commitments.  
+**Date:** 2026-11-26  
+**Repository:** https://github.com/INFORMATION89/Commonplace
+
+This document turns the initial product brief into a proposed direction, feature scope, and development sequence. The separate plan attachment mentioned in the request was not present among the files attached to this conversation or located in the relevant Library search. This pre-plan therefore uses the detailed notes included in the request. The missing attachment should be reviewed and reconciled when supplied; it has not been treated as reviewed.
+
+## 1. Product vision
+
+Commonplace is a personal place to collect, organize, revisit, and selectively share things worth keeping: notes, thoughts, references, tasks, reminders, lists, and small collections.
+
+It should combine:
+
+- The portability and longevity of plain Markdown files.
+- An editor that renders formatting by default, inspired by Obsidian Live Preview.
+- A spatial desktop canvas where notes can be arranged in groups and stacks.
+- A conventional list view that remains equally useful.
+- Simple, reliable synchronization across a user's own devices.
+- Optional connections to storage providers the user already controls.
+- Native interaction and visual conventions on each platform.
+- Tactile, restrained neo-skeuomorphic motion and surfaces.
+- Optional, permission-based access for AI tools and small groups.
+
+Commonplace should feel like a personal notebook and collection space, not like a corporate project-management system or a general-purpose database builder.
+
+## 2. Product principles
+
+1. **Markdown is the durable content format.** Users must be able to open, edit, back up, and move note files without Commonplace.
+2. **Local-first.** Notes remain available and editable offline. Network availability is not required for ordinary writing.
+3. **Native by platform.** Each app uses its platform's standard UI framework, input model, accessibility services, menus, notifications, file access, and conventions.
+4. **Behavioral consistency, not pixel uniformity.** Platforms share product concepts and data contracts while retaining native controls and layout decisions.
+5. **The canvas is an organizing surface, not a replacement for notes.** Notes remain portable documents; canvas positions and group layouts are separate workspace metadata.
+6. **Simple sharing, deliberate permissions.** Personal content stays private unless the user explicitly shares a note or group space.
+7. **Privacy by default.** No telemetry, AI transmission, location capture, or background data sharing without a clear and separate user choice.
+8. **Tactility serves usability.** Depth, spring motion, haptics, and gestures communicate state and affordance rather than becoming decoration.
+9. **Small dependency surface.** Prefer platform frameworks and standard libraries. Add third-party libraries only for a demonstrated gap.
+10. **AI is optional.** The product remains fully useful without an AI provider, AI subscription, or API key.
+
+## 3. Product position and differentiation
+
+Commonplace should learn from existing products without reproducing their entire feature sets.
+
+| Product | Strengths to study | What Commonplace should learn |
+|---|---|---|
+| Craft | Rich documents, pages/cards, folders, tags, Collections, tasks, calendar, daily notes, whiteboards, offline sync, shared spaces, publishing, APIs and MCP | A coherent set of writing, organization, and visual surfaces; fast navigation; optional external-tool access |
+| Obsidian | Plain Markdown files in a local vault, offline access, user-controlled folder location, extensible links and metadata | File ownership, portability, transparent storage, and an editor that displays formatting while writing |
+| Konode | Direct-to-provider sync, narrow permissions, user-owned storage, optional end-to-end encryption, no intermediary data server | Provider adapters, explicit storage choice, least-privilege access, and transparent sync status |
+
+**Commonplace's intended distinction:** a native, Markdown-first personal workspace with a spatial canvas and uncomplicated views, while keeping the underlying notes as ordinary files.
+
+Do not compete with Craft by copying every database, publishing, team, or AI feature. Prioritize the smaller set of capabilities that make Commonplace distinct and excellent.
+
+See [Research and feature comparison](docs/RESEARCH.md) for a more detailed review and links to primary sources.
+
+## 4. Content and data model proposal
+
+The format contract must be specified before implementation.
+
+### 4.1 Notes
+
+- Each ordinary note has a Markdown source file.
+- Markdown remains readable and editable outside the app.
+- Use a documented, conservative Markdown dialect. Extensions must be documented and degrade gracefully in other editors.
+- Support optional YAML frontmatter for stable metadata such as title, identifier, tags, aliases, and timestamps.
+- Preserve unknown frontmatter keys and unknown Markdown constructs when editing. Never silently strip information the app does not understand.
+- Use relative paths for local attachments where practical; document any asset-folder convention.
+- Stable note IDs should survive renames and moves. Do not use a path as the only identity.
+
+### 4.2 Workspace metadata
+
+Keep presentation metadata separate from the note's prose:
+
+- Canvas coordinates, zoom, viewport, groups, stack order, and pin state.
+- Saved list views, sort order, filters, and workspace preferences.
+- Device-origin metadata and app-specific properties that should not be forced into ordinary note content.
+
+The exact representation (sidecar files, a local index, or both) remains an architecture decision. It must be exportable and recoverable. A local database may accelerate search and indexing, but it must not become the only copy of note content.
+
+### 4.3 Tags and AI-readable metadata
+
+- Support visible tags and machine-readable tag metadata.
+- Use stable, documented tag names and preserve hierarchy if hierarchical tags are adopted.
+- Tags must be available to local search, exports, and explicitly authorized external tools.
+- Do not equate “AI-readable” with “automatically sent to an AI provider.”
+- Future on-device suggestions may recommend tags, but must be optional and must not change notes without user approval.
+
+### 4.4 Origin and device information
+
+- Show the device/platform from which a note was created or last edited.
+- Keep a human-readable device label separate from internal sync identifiers.
+- Location can be shown only when the user explicitly enables location capture for that purpose. Location must not be inferred from IP addresses.
+- Users must be able to inspect and remove origin metadata where appropriate.
+
+### 4.5 Tasks, reminders, and shopping lists
+
+- Simple tasks should remain understandable in Markdown where possible.
+- Date/time reminders are application behavior layered on top of note/task data.
+- Location-based reminders require separate permission, clear explanation, battery-aware implementation, and platform-specific validation. They are not a basic editor feature.
+- Shopping lists can be a specialized note type with structured items, checked state, quantity, optional store/location, cost, and a personal index of frequently bought items. Its data must remain exportable and must not require a proprietary backend.
+
+## 5. Primary experiences
+
+### 5.1 Writing and editing
+
+- Markdown-first document model.
+- Live rendering by default: headings, emphasis, lists, links, checkboxes, quotes, code, and supported extensions render in place.
+- Selecting or editing a formatted region should expose the underlying Markdown naturally, following the Live Preview model.
+- Keyboard shortcuts, selection, undo/redo, text composition, and accessibility are first-class.
+- The editor must not lose syntax it cannot fully render.
+- Support attachments without making a proprietary document bundle the only way to retain a note.
+
+### 5.2 Desktop canvas
+
+The primary desktop home is proposed as a navigable, zoomable canvas:
+
+- Pan in all directions and zoom in/out.
+- Place notes as cards or surfaces.
+- Organize notes into named groups.
+- Allow stacks for notes grouped by tags or user-defined criteria.
+- Drag, resize, move, reorder, collapse, and open notes with predictable gestures.
+- Save layouts and viewport state.
+- Pin important tabs or notes.
+- Keep canvas organization separate from note contents.
+- Keep a clear route back to search and the list view.
+
+The canvas must be tested with large workspaces. It must not render every note at full fidelity when only a small region is visible.
+
+### 5.3 List view
+
+The list is a complete alternative, not a reduced fallback:
+
+- Show the same notes represented by the workspace.
+- Group, sort, and filter by date, tag, device, title, and other supported metadata.
+- Allow users to create and save their own view configurations.
+- Provide predictable keyboard navigation and accessible list semantics.
+
+### 5.4 Search and command palette
+
+- Fast full-text search across titles, content, tags, and supported metadata.
+- Keyboard-accessible command palette for search, navigation, creation, and common actions.
+- On mobile, a pull-down gesture from the top may reveal search/command access; it must not conflict with system gestures or scrolling.
+- Search must work locally and offline.
+- Semantic/AI search is a later optional layer, not a prerequisite for useful search.
+
+### 5.5 Reminders
+
+- Start with reliable date/time reminders using native notification and scheduling systems.
+- Show reminder state and permission state clearly.
+- Location-based reminders are a later feature. Geofencing differs across platforms and requires explicit opt-in.
+- A reminder must remain attached to its note/task and survive app restarts and device sync appropriately.
+
+### 5.6 Sharing with friends and small groups
+
+Separate three concepts:
+
+1. **Device sync:** keep one user's own devices consistent.
+2. **Provider storage:** read/write the user's files in Google Drive, iCloud Drive, or another chosen provider.
+3. **Shared spaces:** explicitly grant other people access to selected content.
+
+These are not interchangeable. A folder sync adapter alone does not create safe collaboration.
+
+The first sharing milestone should define private/invited groups, read/write roles, invitation revocation, conflict behavior, and an understandable activity history. Real-time co-editing is not a launch assumption; it requires a separate technical justification.
+
+## 6. Storage and synchronization strategy
+
+### 6.1 Recommended foundation
+
+- Keep a local copy of all content.
+- Define a provider-adapter boundary rather than scattering Google/iCloud/WebDAV logic through the app.
+- Use documented APIs or operating-system file-provider interfaces.
+- Make the current sync provider and status visible to the user.
+- Preserve a local backup or recoverable version history.
+- Detect concurrent modifications and preserve conflicting edits instead of silently overwriting one with another.
+- Make sync retryable, observable, and resilient to interrupted uploads.
+- Use checksums/revisions and atomic or staged writes where the provider supports them.
+- Treat deletion as a first-class event; use tombstones or equivalent safeguards so deleted files do not reappear unexpectedly.
+- Never treat a successful upload as proof that all devices received the change.
+
+### 6.2 Provider research and initial order
+
+**Filesystem / user-selected folder**  
+Best first interoperability proof. Let users select a folder and store ordinary Markdown files and assets in it. On each OS, use supported file-access/document-provider APIs and explain when a provider keeps files online-only.
+
+**Google Drive**  
+Konode demonstrates a least-privilege approach using the Google Drive API's drive.file scope and an app-owned folder of JSON files. For Commonplace, validate how to expose readable Markdown files, how the app discovers only files granted to it, how OAuth refresh works, and how file revisions/conflicts are handled. Do not assume drive.file grants unrestricted access to every existing file in Drive; user-selected files and files created by the app are the relevant boundary.
+
+**iCloud Drive**  
+Use Apple-native file/document access to user-visible files where supported. Do not describe CloudKit as a direct iCloud Drive folder connector: CloudKit is an app-container data service, not a general file browser for the user's visible Drive folder. A CloudKit-backed sync service could be a separate Apple-specific backend, but it would be a different storage promise.
+
+**WebDAV / other providers**  
+A generic WebDAV adapter may offer broad compatibility, but it needs careful authentication, TLS, server compatibility, ETag/revision, and conflict testing. Add providers only when the adapter contract is stable.
+
+**Do not implement every provider in the first milestone.** Select one initial provider only after the file format and conflict model are proven.
+
+### 6.3 Lessons from Konode
+
+Konode's design is useful reference material, not a sync engine to transplant:
+
+- It writes directly to a provider chosen by the user.
+- Google Drive access uses the narrow drive.file scope.
+- Its setup flow uses one backend per sync group.
+- It writes small per-device JSON files, then discovers and pulls peer files on a schedule because ordinary file-storage backends do not offer the required push path.
+- It offers optional end-to-end encryption and keeps credentials on the device.
+- Its documented iCloud position distinguishes iCloud Drive from CloudKit.
+
+Commonplace contains frequently edited, human-authored documents and future shared spaces. It therefore needs stronger concurrent-edit handling, recoverable history, and shared-access semantics than a browser-bookmark synchronizer.
+
+## 7. Native implementation and Motion
+
+- Build native app surfaces for each supported platform; do not ship a single generic web UI inside platform shells and call it native.
+- Choose platform frameworks based on the actual target: for example, SwiftUI/AppKit on Apple platforms, Jetpack Compose on Android, and WinUI on Windows.
+- Use native text input, file access, menus, notifications, haptics, accessibility, windowing, and navigation.
+- Keep product and data contracts consistent across apps; visual and interaction implementations may differ.
+- Prefer standard platform components for ordinary controls. Do not create a custom replacement for every standard button, text field, tab, menu, or notification.
+
+**Motion integration status:** the current INFORMATION89/Motion-UI repository is an Android Jetpack Compose library. Its README documents Android support only; iOS, Windows, macOS, and Linux are not current targets. The initial Motion UI module provides an app-configurable Material 3 theme/token foundation; further component surfaces are staged separately.
+
+Therefore:
+
+- Use Motion on Android where its existing APIs improve springs, gesture handoff, interruption, morphing, or tactile feedback.
+- Pin a tested Motion commit/submodule revision; do not depend on an unreviewed moving branch.
+- Use native platform motion APIs on Apple and Windows platforms.
+- Treat Motion's interaction behavior as a source of design contracts, not as evidence that the library is already cross-platform.
+- Do not add Commonplace-specific logic, content, or visual branding to Motion.
+
+## 8. Neo-skeuomorphic interaction direction
+
+The visual direction is tactile but restrained:
+
+- Clear surfaces, subtle depth, material layering, pressed states, and meaningful elevation.
+- Spring-driven transitions where they improve continuity.
+- Drag and drop that feels physically connected to the pointer/finger.
+- Optional haptic confirmation for meaningful actions.
+- Clear affordances for stacked notes, cards, tabs, and groups.
+- Avoid excessive glass, shadows, parallax, or simulated physical controls.
+- Follow system reduced-motion and accessibility settings. Never hide essential information behind motion.
+
+## 9. AI and external-tool compatibility
+
+AI should be a controlled client of the user's notes, not the owner of the knowledge base.
+
+- Make note tags and metadata readable through documented formats.
+- Offer optional Claude compatibility through a narrowly scoped integration; MCP is a candidate protocol.
+- Start with read-only access and explicit workspace/note selection. Write operations require confirmation.
+- Avoid sending an entire vault by default. Search first, retrieve relevant excerpts, and load full notes only when required.
+- Do not send note content, attachments, or location data to any model without a clear user action and disclosure.
+- Future on-device tag suggestions should be optional, local, and separately configurable.
+- Core note taking, search, reminders, canvas, and sync must work without AI.
+
+## 10. Proposed release sequence
+
+This is a suggested sequence, not a committed calendar. Dates should be set only after platform and synchronization spikes produce realistic estimates.
+
+### Phase 0 — Product and architecture definition
+
+- Approve the Markdown dialect, frontmatter schema, file/asset layout, and workspace-metadata boundary.
+- Choose the first platform and establish its native application shell.
+- Prototype the editor and canvas independently.
+- Test one storage provider end-to-end with interrupted writes and concurrent edits.
+- Decide what the first shared-group model means.
+- Record provider, privacy, security, and licensing decisions.
+
+**Exit:** architecture decisions are written, critical risks have small working prototypes, and the first milestone has measurable acceptance criteria.
+
+### Phase 1 — Local-first MVP / internal alpha
+
+- Native app shell for the first approved platform.
+- Create, edit, rename, move, archive, and delete Markdown notes.
+- Live-rendering Markdown editor.
+- Local persistence and search.
+- Tags and basic metadata.
+- Desktop canvas with pan/zoom and groups.
+- Standard list view with sorting and filtering.
+- Keyboard shortcuts, quick search, command palette, and pinned tabs.
+- Export/import and recovery/backup baseline.
+- Basic origin-device metadata.
+- Automated tests for Markdown round-trip, storage, search, and canvas state.
+
+**Exit:** a user can safely use Commonplace for daily notes offline without being locked into a proprietary file format.
+
+### Phase 2 — Private alpha / first sync
+
+- One selected sync provider.
+- Local-first conflict detection and conflict-preserving resolution.
+- Sync state, errors, retry, device list, and recovery/version history.
+- Initial date/time reminders if native scheduling is validated.
+- Limited sharing prototype or read-only share/export; no claim of full collaboration.
+
+**Exit:** two devices can edit offline and converge without silently losing a note; recovery from a failed or partial sync is tested.
+
+### Phase 3 — Public beta
+
+- Complete the agreed first-platform experience.
+- Add the second approved platform with native controls.
+- Harden cloud-provider behavior, account disconnect, credential revocation, backup, and deletion.
+- Add group-space access model and invitations if approved.
+- Add shopping-list type and its item index.
+- Evaluate MCP/Claude integration with read-only scope and confirmed writes.
+- Validate accessibility, localization, performance, and migration from ordinary Markdown folders.
+
+**Exit:** real-world testers can use the supported platforms, sync, and sharing without data loss or unclear privacy behavior.
+
+### Phase 4 — Version 1.0
+
+- Publish only platforms that meet their build, test, accessibility, and distribution acceptance requirements.
+- Stable Markdown and metadata format with documented compatibility rules.
+- Reliable sync and recovery on supported providers.
+- Explicitly defined small-group sharing and permissions.
+- Native date/time reminders; location reminders only if their permission, battery, and background behavior have passed platform tests.
+- Core canvas/list/editor/search experiences polished and accessible.
+- Versioned migration policy, backup/restore documentation, privacy documentation, and release notes.
+- No critical known data-loss, security, or sync-integrity defects.
+
+### Later / not a launch dependency
+
+- On-device AI tag suggestions.
+- More advanced AI retrieval and personal-knowledge workflows.
+- More storage providers.
+- More advanced location automation.
+- Advanced shopping item indexing, historical costs, and store comparisons.
+- Real-time collaborative editing, if user demand and architecture justify it.
+
+## 11. Versioning proposal
+
+Use Semantic Versioning once public compatibility promises exist:
+
+- Before 1.0: 0.MINOR.PATCH; minor versions may change behavior and data contracts during development.
+- 1.0.0: first stable release for explicitly listed platforms and data formats.
+- After 1.0: increment PATCH for compatible fixes, MINOR for backward-compatible features, MAJOR for breaking changes.
+- Use prerelease labels such as 0.4.0-alpha.1, 0.8.0-beta.1, and 1.0.0-rc.1.
+- Keep app release numbers separate from internal milestones where necessary.
+- Any change to Markdown serialization, IDs, workspace metadata, or sync protocol requires migration and rollback planning.
+
+## 12. Business model flexibility
+
+Commonplace may launch as a paid app, a one-time purchase, a paid upgrade, or eventually a subscription/service. The business model is undecided. Keep the option to charge for the app open; do not assume that Commonplace must be free or freemium. Avoid premature payment infrastructure, artificial limits, or a mandatory server until a commercial and cost rationale exists. Paid status must never remove Markdown portability, export, user access to their files, or privacy controls. AI use and AI provider costs must remain separately disclosed and controlled.
+
+## 13. Initial open decisions
+
+Do not silently decide these during implementation:
+
+1. **First platform:** macOS, Windows, Android, or another initial target. A native multi-platform strategy is the direction; the first shippable platform is not yet confirmed.
+2. **Full platform matrix:** confirm whether iOS, Android, macOS, Windows, Linux, and web are all intended targets, and in what order.
+3. **First sync backend:** user-selected local/provider folder, Google Drive API, Apple-native iCloud document access, or another provider.
+4. **Shared spaces:** read-only sharing, invite-based shared folders, asynchronous multi-writer edits, or real-time collaboration.
+5. **End-to-end encryption:** whether content must be encrypted before upload, and how this affects search, thumbnails, group access, and account recovery.
+6. **Markdown dialect:** CommonMark/GFM baseline, supported extensions, YAML frontmatter rules, internal links, and attachments.
+7. **Mobile canvas:** full canvas, simplified canvas, or list-first mobile navigation with canvas as an alternate view.
+8. **Shopping-list scope:** whether its first version is just a structured list or also supports store/location and price history.
+9. **Business model:** paid app, one-time purchase, paid upgrade, subscription, or a mix. Preserve the options; do not decide pricing during pre-planning.
+
+Record the answers in a decision log before implementing the affected architecture.
+
+## 14. Definition of done for the pre-plan
+
+This pre-plan is complete as a planning baseline only. It does not mean that the application framework, storage protocol, sharing model, or platform list has been selected or implemented. The next milestone is a focused architecture/design spike, not a large speculative code scaffold.
