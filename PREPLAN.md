@@ -1,7 +1,7 @@
 # Commonplace — Pre-plan
 
 **Status:** Initial pre-plan; proposals are not implementation commitments.  
-**Date:** 2026-11-26  
+**Date:** 2026-11-27  
 **Repository:** https://github.com/INFORMATION89/Commonplace
 
 This document turns the initial product brief into a proposed direction, feature scope, and development sequence. The separate plan attachment mentioned in the request was not present among the files attached to this conversation or located in the relevant Library search. This pre-plan therefore uses the detailed notes included in the request. The missing attachment should be reviewed and reconciled when supplied; it has not been treated as reviewed.
@@ -36,6 +36,7 @@ Commonplace should feel like a personal notebook and collection space, not like 
 8. **Tactility serves usability.** Depth, spring motion, haptics, and gestures communicate state and affordance rather than becoming decoration.
 9. **Small dependency surface.** Prefer platform frameworks and standard libraries. Add third-party libraries only for a demonstrated gap.
 10. **AI is optional.** The product remains fully useful without an AI provider, AI subscription, or API key.
+11. **Shared coordination, independent ownership.** Commonplace will integrate with Personal Systems Coordinator (PSC) for cross-device coordination and interoperability shared across the application family. Commonplace retains ownership of notes, workspace semantics, and app-specific rules; PSC must not become a universal database or silently expose data between apps.
 
 ## 3. Product position and differentiation
 
@@ -206,6 +207,43 @@ Konode's design is useful reference material, not a sync engine to transplant:
 
 Commonplace contains frequently edited, human-authored documents and future shared spaces. It therefore needs stronger concurrent-edit handling, recoverable history, and shared-access semantics than a browser-bookmark synchronizer.
 
+### 6.4 Shared backend and cross-app coordination: Personal Systems Coordinator (PSC)
+
+Commonplace is planned to use [Personal Systems Coordinator (PSC)](https://github.com/INFORMATION89/Personal-Systems-Coordinator) as the shared backend/coordination foundation for the application family. PSC is an independent project and integration target, not a Commonplace module, a note-storage format, or an external storage provider.
+
+The current PSC repository describes a local-first, provider-neutral coordination foundation in research and architecture planning. Its stated direction does **not** require a first-party cloud, a mandatory account, or a universal shared database. This plan adopts PSC as Commonplace's shared coordination backend while preserving those constraints. The word *backend* must not be interpreted as approval to centralize all application data or require a hosted PSC service.
+
+**Responsibility boundaries**
+
+- **Commonplace owns** Markdown note content, note identity and semantics, workspace layouts, task/reminder behavior, sharing rules, and the decision about which Commonplace data categories are eligible for synchronization.
+- **PSC owns the shared coordination layer** defined by its separately approved contracts: portable data envelopes/manifests, versioned interoperability metadata, provider-adapter boundaries and capability descriptions, generic synchronization mechanics (checkpoints, revisions, idempotent delivery, retries, and sync status), and explicitly authorized cross-app references. These are target responsibilities to validate against PSC's research and decisions; this document does not claim that APIs, SDKs, or implementations already exist.
+- **The user-selected provider or folder** remains the storage/transport destination under PSC's current direction. It is not interchangeable with PSC itself.
+- **Each application retains its domain model.** PSC must not import Commonplace, Solstice, Meridian, or another app's business logic. Commonplace must not access another application's private database or call provider-specific APIs from its domain layer.
+
+**Required Commonplace integration shape**
+
+1. Commonplace maps only explicitly selected, versioned data categories into PSC's portable synchronization contract. Notes and workspace metadata remain owned by Commonplace.
+2. A small Commonplace adapter translates between Commonplace's domain model and PSC's versioned, platform-neutral contract. PSC/provider details must not spread through the editor, canvas, search, or note model.
+3. PSC coordinates generic exchange and provider operations; Commonplace defines the meaning of its records and the conflict policy appropriate to each data type. Do not apply a universal last-write-wins rule.
+4. Every application and data category must have an isolated identity/namespace and explicit authorization scope. Linking PSC for one application must not grant another application access. Cross-app exchange requires a separate user-approved purpose and permission.
+5. Provider credentials stay in platform-secure storage and are scoped to the provider/app integration. Do not assume PSC is an identity provider, token vault, or single-sign-on service; its current project documents do not approve those roles.
+
+**Hosted-service boundary**
+
+The initial integration target is PSC's shared coordination and provider-neutral synchronization model, not a mandatory centrally operated server. The exact runtime/deployment model (in-process library, platform adapter, local companion service, optional hosted coordinator, or a combination) remains an architecture question for the PSC project.
+
+A future hosted PSC capability, content relay, shared identity service, notification service, or managed storage option must be evaluated as a separate capability. It requires explicit approval of its data flows, tenancy/isolation model, authentication and authorization, operational costs, availability, retention/deletion, backup/recovery, and encryption design. It must not silently turn PSC into the default plaintext store for notes or unrelated app data, and it must not remove the local-only or user-controlled-provider path.
+
+**Privacy and availability requirements**
+
+- Core Commonplace writing, reading, editing, local search, and export work without PSC, network access, or a connected provider.
+- Synchronization is an explicit, inspectable choice. Users can see the Commonplace data categories involved and the destination, and can pause, disconnect, revoke provider access, and recover local data.
+- Telemetry, analytics, contribution of data to improve Meridian, external AI access, and cross-device synchronization remain separate purposes with separate consent.
+- PSC/provider failures, expired authorization, and offline devices must delay synchronization safely rather than block local work or discard changes.
+- No note, attachment, location, credential, or private-space content is shared with another app merely because both apps use PSC.
+
+Before Commonplace depends on PSC, its repository must publish an accepted integration contract and a tested proof of concept for the required provider/platform path. See the [PSC project](https://github.com/INFORMATION89/Personal-Systems-Coordinator) for its current research, principles, and unresolved decisions.
+
 ## 7. Native implementation and Motion
 
 - Build native app surfaces for each supported platform; do not ship a single generic web UI inside platform shells and call it native.
@@ -257,11 +295,15 @@ This is a suggested sequence, not a committed calendar. Dates should be set only
 - Approve the Markdown dialect, frontmatter schema, file/asset layout, and workspace-metadata boundary.
 - Choose the first platform and establish its native application shell.
 - Prototype the editor and canvas independently.
-- Test one storage provider end-to-end with interrupted writes and concurrent edits.
+- Review the PSC repository and agree the Commonplace/PSC responsibility boundary, including data ownership, provider adapters, versioned contracts, authorization, and offline fallback.
+- Map the Commonplace data categories that may be synchronized through PSC; document what remains local and what requires separate opt-in.
+- Define the PSC integration adapter and prove one representative data exchange without coupling Commonplace's domain model to a provider.
+- Test one candidate storage provider through the PSC contract with interrupted writes and concurrent edits; do not build a competing provider-specific sync engine inside Commonplace.
+- Resolve with the PSC project whether its initial runtime is a client-side coordination layer, a local companion, an optional hosted service, or a combination. Do not assume a mandatory cloud or shared account.
 - Decide what the first shared-group model means.
 - Record provider, privacy, security, and licensing decisions.
 
-**Exit:** architecture decisions are written, critical risks have small working prototypes, and the first milestone has measurable acceptance criteria.
+**Exit:** architecture decisions are written, the PSC boundary and unresolved deployment choices are documented, critical risks have small working prototypes, and the first milestone has measurable acceptance criteria.
 
 ### Phase 1 — Local-first MVP / internal alpha
 
@@ -275,15 +317,17 @@ This is a suggested sequence, not a committed calendar. Dates should be set only
 - Keyboard shortcuts, quick search, command palette, and pinned tabs.
 - Export/import and recovery/backup baseline.
 - Basic origin-device metadata.
-- Automated tests for Markdown round-trip, storage, search, and canvas state.
+- A narrow PSC adapter/port with a local mock or no-op implementation, so Commonplace's domain layer is not coupled to PSC availability or implementation details.
+- Automated tests for Markdown round-trip, storage, search, canvas state, and the PSC adapter boundary.
 
 **Exit:** a user can safely use Commonplace for daily notes offline without being locked into a proprietary file format.
 
 ### Phase 2 — Private alpha / first sync
 
-- One selected sync provider.
-- Local-first conflict detection and conflict-preserving resolution.
-- Sync state, errors, retry, device list, and recovery/version history.
+- Integrate the first supported sync destination through PSC's accepted, versioned contract and provider adapter; do not put provider-specific sync logic in Commonplace's domain layer.
+- Explicit opt-in for the selected workspace/data categories and provider; provide inspect, pause, disconnect, provider-access revocation, and recovery controls.
+- Local-first conflict detection and conflict-preserving resolution, with Commonplace defining data-type semantics and PSC handling only generic coordination mechanics.
+- Sync state, errors, retry, device information where supported by the PSC contract, and recovery/version history.
 - Initial date/time reminders if native scheduling is validated.
 - Limited sharing prototype or read-only share/export; no claim of full collaboration.
 
@@ -297,6 +341,7 @@ This is a suggested sequence, not a committed calendar. Dates should be set only
 - Add group-space access model and invitations if approved.
 - Add shopping-list type and its item index.
 - Evaluate MCP/Claude integration with read-only scope and confirmed writes.
+- Verify that Commonplace can coexist with Solstice and other PSC clients without shared database access, namespace collisions, or cross-app data leakage.
 - Validate accessibility, localization, performance, and migration from ordinary Markdown folders.
 
 **Exit:** real-world testers can use the supported platforms, sync, and sharing without data loss or unclear privacy behavior.
@@ -309,11 +354,14 @@ This is a suggested sequence, not a committed calendar. Dates should be set only
 - Explicitly defined small-group sharing and permissions.
 - Native date/time reminders; location reminders only if their permission, battery, and background behavior have passed platform tests.
 - Core canvas/list/editor/search experiences polished and accessible.
+- Document the supported PSC contract version/range and any required migration or compatibility policy.
+- Keep Commonplace's core behavior available when PSC or a provider is unavailable.
 - Versioned migration policy, backup/restore documentation, privacy documentation, and release notes.
 - No critical known data-loss, security, or sync-integrity defects.
 
 ### Later / not a launch dependency
 
+- An optional hosted PSC service, content relay, shared identity, or managed storage capability, only if separately justified, privacy-reviewed, costed, and approved; it is not a prerequisite for local-first Commonplace.
 - On-device AI tag suggestions.
 - More advanced AI retrieval and personal-knowledge workflows.
 - More storage providers.
@@ -334,7 +382,7 @@ Use Semantic Versioning once public compatibility promises exist:
 
 ## 12. Business model flexibility
 
-Commonplace may launch as a paid app, a one-time purchase, a paid upgrade, or eventually a subscription/service. The business model is undecided. Keep the option to charge for the app open; do not assume that Commonplace must be free or freemium. Avoid premature payment infrastructure, artificial limits, or a mandatory server until a commercial and cost rationale exists. Paid status must never remove Markdown portability, export, user access to their files, or privacy controls. AI use and AI provider costs must remain separately disclosed and controlled.
+Commonplace may launch as a paid app, a one-time purchase, a paid upgrade, or eventually a subscription/service. The business model is undecided. Keep the option to charge for the app open; do not assume that Commonplace must be free or freemium. Avoid premature payment infrastructure, artificial limits, or a mandatory hosted PSC service until a commercial, privacy, and cost rationale exists. The shared PSC integration must not force a first-party cloud account or remove the user-controlled-provider/local-only path. Paid status must never remove Markdown portability, export, user access to their files, or privacy controls. AI use and AI provider costs must remain separately disclosed and controlled.
 
 ## 13. Initial open decisions
 
@@ -342,13 +390,16 @@ Do not silently decide these during implementation:
 
 1. **First platform:** macOS, Windows, Android, or another initial target. A native multi-platform strategy is the direction; the first shippable platform is not yet confirmed.
 2. **Full platform matrix:** confirm whether iOS, Android, macOS, Windows, Linux, and web are all intended targets, and in what order.
-3. **First sync backend:** user-selected local/provider folder, Google Drive API, Apple-native iCloud document access, or another provider.
+3. **First sync destination/provider behind PSC:** user-selected local/provider folder, Google Drive API, Apple-native iCloud document access, or another provider. PSC is the shared coordination/integration layer, not a substitute for choosing and validating the storage destination.
 4. **Shared spaces:** read-only sharing, invite-based shared folders, asynchronous multi-writer edits, or real-time collaboration.
 5. **End-to-end encryption:** whether content must be encrypted before upload, and how this affects search, thumbnails, group access, and account recovery.
 6. **Markdown dialect:** CommonMark/GFM baseline, supported extensions, YAML frontmatter rules, internal links, and attachments.
 7. **Mobile canvas:** full canvas, simplified canvas, or list-first mobile navigation with canvas as an alternate view.
 8. **Shopping-list scope:** whether its first version is just a structured list or also supports store/location and price history.
 9. **Business model:** paid app, one-time purchase, paid upgrade, subscription, or a mix. Preserve the options; do not decide pricing during pre-planning.
+10. **PSC runtime and deployment model:** client-side library/platform adapter, local companion service, optional hosted coordinator, or a combination. The current PSC repository does not select one.
+11. **PSC shared-service scope:** decide whether PSC remains focused on provider-neutral synchronization/interoperability or also offers optional device registry, identity, notifications, or event routing. Do not assume these services exist or that every app must use them.
+12. **PSC content path and security:** decide whether data always travels directly through user-controlled providers or whether an optional hosted relay/storage path is justified; define encryption, metadata exposure, retention, account recovery, and provider/token ownership before implementation.
 
 Record the answers in a decision log before implementing the affected architecture.
 
