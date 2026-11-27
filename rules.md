@@ -85,13 +85,13 @@ Do not invent requirements. A proposal in a draft plan is not an approved archit
 
 1. Every supported app must be a genuinely native application using its platform's native UI framework and standard interaction model.
 2. **Electron is prohibited.** Do not use Electron, Chromium desktop wrappers, or web views as the primary application UI on desktop. A native shell around a web application does not satisfy this rule.
-2. Use native text input, menus, file access, notifications, accessibility, keyboard handling, window management, and navigation.
-3. Shared product semantics do not require pixel-identical screens across platforms.
-4. Use standard platform controls before building custom replacements.
-5. A custom control must solve a real product need that standard components do not meet.
-6. Support keyboard, pointer, touch, trackpad, screen reader, high contrast, and reduced-motion expectations where relevant to the platform.
-7. Do not claim a platform is supported until build, test, accessibility, distribution, and real-platform validation exist.
-8. A web view wrapped in a native shell is not automatically a native implementation.
+3. Use native text input, menus, file access, notifications, accessibility, keyboard handling, window management, and navigation.
+4. Shared product semantics do not require pixel-identical screens across platforms.
+5. Use standard platform controls before building custom replacements.
+6. A custom control must solve a real product need that standard components do not meet.
+7. Support keyboard, pointer, touch, trackpad, screen reader, high contrast, and reduced-motion expectations where relevant to the platform.
+8. Do not claim a platform is supported until build, test, accessibility, distribution, and real-platform validation exist.
+9. A web view wrapped in a native shell is not automatically a native implementation.
 
 ## 8. Motion and tactile interaction
 
