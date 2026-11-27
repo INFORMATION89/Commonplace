@@ -26,11 +26,11 @@ Commonplace may become a paid app, paid upgrade, subscription, or service in the
 
 ## 3. Two separate AI domains
 
-### 2.1 AI used to develop Commonplace
+### 3.1 AI used to develop Commonplace
 
 Coding assistants may help plan, research, implement, test, and review the repository. Their context should be restricted to the task and files they need. Repository data, user attachments, and secrets must not be copied into external tools unless the relevant access is authorized.
 
-### 2.2 AI features inside Commonplace
+### 3.2 AI features inside Commonplace
 
 AI features operate on the user's notes and metadata. They require a separate permission model, disclosure, usage controls, and provider configuration. A user who uses Commonplace without connecting AI must still have the complete core product.
 
@@ -49,7 +49,7 @@ Do not confuse an AI coding assistant's permission to inspect the repository wit
 9. Provide disconnect, revoke, and clear-history controls where supported.
 10. Do not claim that an external provider retains no data unless its current official terms and configuration substantiate that statement.
 
-### 3.1 Read and write permissions
+### 4.1 Read and write permissions
 
 - Begin with read-only search and retrieval.
 - Note creation or editing by an AI tool must be an explicit user action.
@@ -57,7 +57,7 @@ Do not confuse an AI coding assistant's permission to inspect the repository wit
 - Deletion, moving notes, modifying tags in bulk, changing sharing permissions, or sending invitations always requires direct confirmation.
 - Never allow an AI agent to grant itself broader access or bypass the user's scope selection.
 
-### 3.2 Claude compatibility
+### 4.2 Claude compatibility
 
 Optional Claude compatibility may use MCP or another official, documented integration.
 
@@ -68,7 +68,7 @@ Optional Claude compatibility may use MCP or another official, documented integr
 - Access must be revocable without deleting or altering the user's notes.
 - Do not design the storage format around one AI provider.
 
-### 3.3 On-device AI
+### 4.3 On-device AI
 
 On-device tag suggestions are a future enhancement, not an MVP dependency.
 
