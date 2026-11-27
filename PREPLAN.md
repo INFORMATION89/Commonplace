@@ -211,7 +211,7 @@ Commonplace contains frequently edited, human-authored documents and future shar
 
 Commonplace is planned to use [Personal Systems Coordinator (PSC)](https://github.com/INFORMATION89/Personal-Systems-Coordinator) as the shared backend/coordination foundation for the application family. PSC is an independent project and integration target, not a Commonplace module, a note-storage format, or an external storage provider.
 
-The current PSC repository describes a local-first, provider-neutral coordination foundation in research and architecture planning. Its stated direction does **not** require a first-party cloud, a mandatory account, or a universal shared database. This plan adopts PSC as Commonplace's shared coordination backend while preserving those constraints. The word *backend* must not be interpreted as approval to centralize all application data or require a hosted PSC service.
+The current PSC repository describes a local-first, provider-neutral coordination foundation in research and architecture planning. Commonplace adopts PSC as the shared coordination layer across the application family, with a permanent decentralized/provider-based model: no PSC-operated central backend, first-party cloud, hosted relay, managed storage or mandatory account.
 
 **Responsibility boundaries**
 
@@ -228,7 +228,7 @@ The current PSC repository describes a local-first, provider-neutral coordinatio
 4. Every application and data category must have an isolated identity/namespace and explicit authorization scope. Linking PSC for one application must not grant another application access. Cross-app exchange requires a separate user-approved purpose and permission.
 5. Provider credentials stay in platform-secure storage and are scoped to the provider/app integration. Do not assume PSC is an identity provider, token vault, or single-sign-on service; its current project documents do not approve those roles.
 
-**Hosted-service boundary**
+**Decentralized execution boundary**
 
 PSC is permanently decentralized and provider-based. It will not operate a centrally hosted backend, first-party content relay, managed storage service, or mandatory cloud account. Its coordination logic runs in the applications and/or user-controlled devices as defined by the approved technical design; data moves through providers or folders selected and controlled by the user. Optional services operated by unrelated providers remain external dependencies, not a PSC-owned cloud. Any future proposal to change this is outside the approved direction and requires a new explicit product decision.
 
@@ -303,13 +303,13 @@ This is a suggested sequence, not a committed calendar. Dates should be set only
 - Confirm desktop-first development. Keep the first desktop operating system explicitly undecided until platform feasibility spikes and development constraints are compared.
 - Define the native UI architecture and platform boundaries for Windows (WinUI 3), macOS (SwiftUI), Android (Jetpack Compose + Motion UI + Material You), and future iOS (SwiftUI); identify the Linux native UI decision as open if Linux remains in the supported matrix.
 - Compare viable shared-core approaches without selecting a UI framework that erases native platform behavior. Prototype the core/domain boundary and native bindings on the candidate desktop platforms before committing to a language/runtime.
-- Choose the first desktop platform only after the comparison and establish its native application shell.
+- Choose the first desktop OS only after the comparison and establish its native application shell.
 - Prototype the editor and canvas independently.
 - Review the PSC repository and agree the Commonplace/PSC responsibility boundary, including data ownership, provider adapters, versioned contracts, authorization, and offline fallback.
 - Map the Commonplace data categories that may be synchronized through PSC; document what remains local and what requires separate opt-in.
 - Define the PSC integration adapter and prove one representative data exchange without coupling Commonplace's domain model to a provider.
 - Test one candidate storage provider through the PSC contract with interrupted writes and concurrent edits; do not build a competing provider-specific sync engine inside Commonplace.
-- Resolve with the PSC project whether its initial runtime is a client-side coordination layer, a local companion, an optional hosted service, or a combination. Do not assume a mandatory cloud or shared account.
+- Validate the local execution model and native platform adapters for PSC; coordination must run on user devices and/or user-controlled components, with storage and transport delegated to user-selected providers or folders. A PSC-operated hosted service is out of scope.
 - Decide what the first shared-group model means.
 - Record provider, privacy, security, and licensing decisions.
 
@@ -371,7 +371,7 @@ This is a suggested sequence, not a committed calendar. Dates should be set only
 
 ### Later / not a launch dependency
 
-- An optional hosted PSC service, content relay, shared identity, or managed storage capability, only if separately justified, privacy-reviewed, costed, and approved; it is not a prerequisite for local-first Commonplace.
+- Additional local coordination capabilities and provider adapters, only when justified by user needs and compatible with PSC's permanently decentralized model.
 - On-device AI tag suggestions.
 - More advanced AI retrieval and personal-knowledge workflows.
 - More storage providers.
@@ -392,13 +392,13 @@ Use Semantic Versioning once public compatibility promises exist:
 
 ## 12. Business model flexibility
 
-Commonplace may launch as a paid app, a one-time purchase, a paid upgrade, or eventually a subscription/service. The business model is undecided. Keep the option to charge for the app open; do not assume that Commonplace must be free or freemium. Avoid premature payment infrastructure, artificial limits, or a mandatory hosted PSC service until a commercial, privacy, and cost rationale exists. The shared PSC integration must not force a first-party cloud account or remove the user-controlled-provider/local-only path. Paid status must never remove Markdown portability, export, user access to their files, or privacy controls. AI use and AI provider costs must remain separately disclosed and controlled.
+Commonplace may launch as a paid app, a one-time purchase, a paid upgrade, or eventually a subscription/service. The business model is undecided. Keep the option to charge for the app open; do not assume that Commonplace must be free or freemium. Avoid premature payment infrastructure, artificial limits, or infrastructure that would contradict PSC's permanently decentralized model. The shared PSC integration must not force a first-party cloud account or remove the user-controlled-provider/local-only path. Paid status must never remove Markdown portability, export, user access to their files, or privacy controls. AI use and AI provider costs must remain separately disclosed and controlled.
 
 ## 13. Initial open decisions
 
 Do not silently decide these during implementation:
 
-1. **First platform:** macOS, Windows, Android, or another initial target. A native multi-platform strategy is the direction; the first shippable platform is not yet confirmed.
+1. **First desktop OS:** Windows or macOS. Desktop-first is confirmed, but the first desktop operating system remains undecided pending native architecture and feasibility prototypes.
 2. **Full platform matrix:** confirm whether iOS, Android, macOS, Windows, Linux, and web are all intended targets, and in what order.
 3. **First sync destination/provider behind PSC:** user-selected local/provider folder, Google Drive API, Apple-native iCloud document access, or another provider. PSC is the shared coordination/integration layer, not a substitute for choosing and validating the storage destination.
 4. **Shared spaces:** read-only sharing, invite-based shared folders, asynchronous multi-writer edits, or real-time collaboration.
@@ -407,9 +407,9 @@ Do not silently decide these during implementation:
 7. **Mobile canvas:** full canvas, simplified canvas, or list-first mobile navigation with canvas as an alternate view.
 8. **Shopping-list scope:** whether its first version is just a structured list or also supports store/location and price history.
 9. **Business model:** paid app, one-time purchase, paid upgrade, subscription, or a mix. Preserve the options; do not decide pricing during pre-planning.
-10. **PSC runtime and deployment model:** client-side library/platform adapter, local companion service, optional hosted coordinator, or a combination. The current PSC repository does not select one.
-11. **PSC shared-service scope:** decide whether PSC remains focused on provider-neutral synchronization/interoperability or also offers optional device registry, identity, notifications, or event routing. Do not assume these services exist or that every app must use them.
-12. **PSC content path and security:** decide whether data always travels directly through user-controlled providers or whether an optional hosted relay/storage path is justified; define encryption, metadata exposure, retention, account recovery, and provider/token ownership before implementation.
+10. **PSC local execution and adapter model:** decide which coordination components belong in each app, which may run as user-controlled local components, and how platform adapters communicate without a central service.
+11. **PSC capability scope:** decide which decentralized capabilities are in scope (for example, provider discovery, device metadata, synchronization status and event routing) and define their local/provider-based contracts.
+12. **PSC content protection:** define encryption, metadata exposure, key recovery, provider/token ownership and revocation for user-selected storage paths. A hosted PSC relay or managed storage service is not an available option.
 
 Record the answers in a decision log before implementing the affected architecture.
 
