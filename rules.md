@@ -83,7 +83,8 @@ Do not invent requirements. A proposal in a draft plan is not an approved archit
 
 ## 7. Native platform experience
 
-1. Each supported app must use its platform's native UI framework and standard interaction model.
+1. Every supported app must be a genuinely native application using its platform's native UI framework and standard interaction model.
+2. **Electron is prohibited.** Do not use Electron, Chromium desktop wrappers, or web views as the primary application UI on desktop. A native shell around a web application does not satisfy this rule.
 2. Use native text input, menus, file access, notifications, accessibility, keyboard handling, window management, and navigation.
 3. Shared product semantics do not require pixel-identical screens across platforms.
 4. Use standard platform controls before building custom replacements.
@@ -104,6 +105,9 @@ Do not invent requirements. A proposal in a draft plan is not an approved archit
 8. On Android, pin a tested Motion commit. Do not consume a moving branch tip.
 9. On other platforms, use native animation and interaction APIs until an independently validated compatible implementation exists.
 10. Do not place Commonplace-specific screens, brand tokens, or data models inside Motion.
+11. Platform UI targets are: Android — Jetpack Compose with Motion UI and Material You/Material 3; Windows — WinUI 3; macOS — SwiftUI; future iOS — SwiftUI as the proposed direction. Linux UI framework remains to be selected if Linux is included.
+12. Share domain logic and data contracts, not UI widgets or platform interaction assumptions. Every platform must implement native controls, text input, navigation, menus, accessibility, file access, notifications, and window management.
+13. Desktop-first is the approved development order. The first desktop OS is not yet selected; do not assume Windows or macOS without an explicit decision and feasibility comparison.
 
 ## 9. AI inside the product
 
