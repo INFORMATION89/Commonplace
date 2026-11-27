@@ -332,7 +332,11 @@ Use Semantic Versioning once public compatibility promises exist:
 - Keep app release numbers separate from internal milestones where necessary.
 - Any change to Markdown serialization, IDs, workspace metadata, or sync protocol requires migration and rollback planning.
 
-## 12. Initial open decisions
+## 12. Business model flexibility
+
+Commonplace may launch as a paid app, a one-time purchase, a paid upgrade, or eventually a subscription/service. The business model is undecided. Keep the option to charge for the app open; do not assume that Commonplace must be free or freemium. Avoid premature payment infrastructure, artificial limits, or a mandatory server until a commercial and cost rationale exists. Paid status must never remove Markdown portability, export, user access to their files, or privacy controls. AI use and AI provider costs must remain separately disclosed and controlled.
+
+## 13. Initial open decisions
 
 Do not silently decide these during implementation:
 
@@ -344,9 +348,10 @@ Do not silently decide these during implementation:
 6. **Markdown dialect:** CommonMark/GFM baseline, supported extensions, YAML frontmatter rules, internal links, and attachments.
 7. **Mobile canvas:** full canvas, simplified canvas, or list-first mobile navigation with canvas as an alternate view.
 8. **Shopping-list scope:** whether its first version is just a structured list or also supports store/location and price history.
+9. **Business model:** paid app, one-time purchase, paid upgrade, subscription, or a mix. Preserve the options; do not decide pricing during pre-planning.
 
 Record the answers in a decision log before implementing the affected architecture.
 
-## 13. Definition of done for the pre-plan
+## 14. Definition of done for the pre-plan
 
 This pre-plan is complete as a planning baseline only. It does not mean that the application framework, storage protocol, sharing model, or platform list has been selected or implemented. The next milestone is a focused architecture/design spike, not a large speculative code scaffold.
