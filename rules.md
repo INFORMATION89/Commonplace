@@ -37,6 +37,11 @@ Do not invent requirements. A proposal in a draft plan is not an approved archit
 4. Paid features must not make ordinary Markdown content inaccessible, non-exportable, or dependent on continued payment to retrieve.
 5. Do not build a proprietary backend or subscription enforcement before there is a justified service requirement and an approved business model.
 6. Distinguish app purchase revenue from recurring infrastructure and AI-provider costs. Do not silently subsidize unbounded per-user usage.
+7. Before choosing a business model or building payment systems, create a documented commercial-feasibility assessment. Compare suitable models using market evidence, user value, distribution rules, costs, risks, and long-term obligations.
+8. Include fixed and variable costs: development, maintenance, support, platform testing, distribution/payment fees, refunds, taxes and applicable obligations, third-party APIs, providers, datasets, AI/model usage, and any service operations.
+9. Do not assume a subscription is appropriate. A recurring payment must correspond to a clear ongoing benefit or cost; one-time purchase and paid-upgrade models must also be evaluated where relevant.
+10. Do not introduce ads, tracking, sale of user data, forced cloud dependence, artificial engagement, or reduced privacy as monetization mechanisms.
+11. Paid status must never trap users' ordinary Markdown content, prevent export/recovery, or remove access to local files. Preserve local-only and user-selected-provider paths.
 
 ## 4. Markdown and data integrity
 
@@ -135,7 +140,21 @@ Follow [AI_USAGE_POLICY.md](AI_USAGE_POLICY.md) for model selection, token econo
 6. Pin versions and use reproducible builds.
 7. Recheck licenses and notices before shipping bundled code.
 
-## 11. Testing and verification
+## 11. Licensing, third-party resources, and provenance
+
+1. Treat licensing and resource provenance as mandatory design, dependency-review, and release requirements.
+2. Maintain an inventory for code, libraries, SDKs, frameworks, plugins, fonts, icons, illustrations, photographs, audio, animations, templates, datasets, documentation, code snippets, APIs, hosted services, AI models, and generated assets.
+3. For each resource, record its source, exact version, rights holder where known, license/terms URL, date checked, intended use, commercial-use and redistribution rights, modification rights, attribution/notice requirements, copyleft or source-disclosure duties, patent/trademark conditions, fees, quotas, and material restrictions.
+4. Classify each resource as **allowed**, **allowed with conditions**, or **prohibited/unresolved**. Do not ship or depend on prohibited or unresolved resources until the rights and terms are clarified.
+5. Review direct and transitive dependency licenses. Check compatibility with the intended distribution model, including proprietary/commercial distribution, redistribution, modification, network use, patent clauses, and source-disclosure obligations.
+6. Keep all required LICENSE, NOTICE, copyright, attribution, and corresponding-source materials in the repository or release package. Maintain an SBOM where practical.
+7. Do not treat public availability, no-cost access, attribution, open-source status, or AI generation as automatic permission to use, modify, redistribute, or monetize a resource.
+8. Use official API documentation and comply with API/provider terms, data-use restrictions, quotas, rate limits, commercial-use rules, and attribution requirements. Do not scrape or bypass restrictions.
+9. Review AI-generated code/assets for provenance and applicable tool/model terms. AI-generated output is not exempt from the normal review process.
+10. The license for Commonplace's own code is a separate product decision from the licenses of dependencies and assets. Do not add or change the repository license, promise open-source distribution, or adopt dual licensing without explicit approval.
+11. If rights are ambiguous, conflicting, or material to commercial distribution, block release of that resource until qualified review resolves the issue.
+
+## 12. Testing and verification
 
 Tests must protect user data and observable behavior, not internal implementation details alone.
 
@@ -159,7 +178,7 @@ Use deterministic fixtures for ordinary tests. Network-dependent tests must be e
 
 A passing build is not proof of sync safety, accessibility, or device behavior. Report exactly what was tested and what remains unverified.
 
-## 12. Documentation and decisions
+## 13. Documentation and decisions
 
 1. Maintain one source of truth for each category of information.
 2. The pre-plan expresses product direction; decision records capture approved decisions; feature specifications define behavior and acceptance; roadmap/handoff documents track work.
@@ -169,7 +188,7 @@ A passing build is not proof of sync safety, accessibility, or device behavior. 
 6. Do not let contradictory documents remain equally authoritative.
 7. Keep handoffs concise and actionable: current status, decisions, branch/commit, changed files, commands/results, risks, and next step.
 
-## 13. Git and delivery
+## 14. Git and delivery
 
 1. Work on a focused feature branch and use pull requests for changes.
 2. Keep commits cohesive and explain their purpose.
@@ -180,7 +199,7 @@ A passing build is not proof of sync safety, accessibility, or device behavior. 
 7. Inspect the full diff, not only the summary generated by an AI agent.
 8. Do not merge a risky data or sync change solely because an agent says it is correct.
 
-## 14. Definition of done
+## 15. Definition of done
 
 A task is complete only when:
 
