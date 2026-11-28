@@ -1,7 +1,7 @@
 # Commonplace — Development Plan
 
-**Status:** Approved baseline for the first viable product (MVP). Supersedes [PREPLAN.md](../PREPLAN.md) wherever they disagree.
-**Date:** 2026-11-28
+**Status:** Approved baseline for **v1**, the first viable product. ("MVP" in this document means v1.) Supersedes [PREPLAN.md](../PREPLAN.md) wherever they disagree.
+**Date:** 2026-11-28 (revised the same day: organization model, reminders, links, PSC timing)
 **Decision log:** [DECISIONS.md](DECISIONS.md) · **Agent rules:** [AGENTS.md](../AGENTS.md) · **Current state:** [HANDOFF.md](HANDOFF.md)
 
 This document is the single plan from first commit to MVP release. Coding agents follow it task by task (§10). Any change to a decision here must first be recorded in the decision log and approved by the owner.
@@ -10,13 +10,18 @@ This document is the single plan from first commit to MVP release. Coding agents
 
 ## 0. Plain-language summary (for the owner)
 
-- **What we build first:** a Mac app for writing Markdown notes with live formatting, images in notes, tags, search and a list view. Then the same app on Windows.
+- **What we build first (v1):** a Mac app, then the same app on Windows.
+  - Organized as **Books → Sections → Pages**, plus **Loose notes** for quick sticky-note-style thoughts.
+  - Markdown editing with live formatting, inline images, and links between pages, sections and books.
+  - Tasks with **timed reminders**, tags, search and a list view.
 - **How it's built:**
   - The **core** (saving files, search, tags, note IDs) is written once in Rust and shared by every app.
   - The **editor** (the typing area) is written once with CodeMirror, the same editor technology Obsidian uses, and embedded in each app.
   - Everything else (windows, menus, sidebar, settings) is **native**: SwiftUI on Mac, WinUI 3 on Windows.
-- **Where your notes live:** ordinary `.md` files and images in a folder you choose. If you put that folder in iCloud Drive, OneDrive or Dropbox, your Mac and Windows PC already share the notes and images. The app detects and protects against conflicting edits. A real sync engine comes in v2.
-- **Later:** the canvas and the Android app come in **v2**. Reminders, sharing, AI features and iOS come after that.
+- **Where your notes live:** ordinary `.md` files and images in a folder you choose. If you put that folder in iCloud Drive, OneDrive or Dropbox, your Mac and Windows PC already share the notes and images. The app detects and protects against conflicting edits. Real sync comes in v2.
+- **PSC (your shared sync system):** work on it starts during v1, in its own repository, with Commonplace as its first app. In **v2**, Commonplace signs in to Google Drive through PSC and syncs into a `Commonplace` folder there. GitHub comes after.
+- **v2 also brings:** the canvas and moodboards, the Android app, location reminders, and research into link saving (how Craft does it).
+- **After v2:** sharing, AI features, iOS.
 - **Your role:** you approve big decisions, test each milestone with the plain-language checklists, and supply real art (app icon, any illustrations).
 - **AI's role:** Sonnet sessions do the coding, one numbered task at a time. Opus is used only for the rare cases listed in §9.
 
@@ -24,16 +29,19 @@ This document is the single plan from first commit to MVP release. Coding agents
 
 ## 1. Scope
 
-### 1.1 MVP (version 0.1 — Mac, then Windows)
+### 1.1 v1 / MVP (released as 0.1.0 — Mac, then Windows)
 
 | Area | Included |
 |---|---|
-| Vault | Choose or create a folder ("vault"). Open an existing Markdown folder (Obsidian-compatible). Watch for changes made outside the app. |
-| Notes | Create, rename, move between folders, archive (move to `Archive/`), delete (to system Trash). Autosave. |
-| Editor | Live preview: headings, bold, italic, strikethrough, inline code, code blocks, links, bullet/numbered lists, task checkboxes (clickable), quotes, horizontal rules, inline images. Moving into formatted text shows its Markdown. Floating formatting toolbar on text selection. Standard shortcuts, undo/redo, spellcheck. GFM tables are kept exactly and shown as styled source; full table rendering comes after the MVP. |
+| Library | Choose or create a library folder (called the "vault" in technical docs). Open an existing Markdown folder (Obsidian-compatible). Watch for changes made outside the app. |
+| Organization | **Books** (top-level folders) → **Sections** (folders inside a book, may be nested) → **Pages** (Markdown notes). **Loose notes**: pages that belong to no book, for quick capture. Book and section order, plus optional book color/icon, are kept in workspace metadata. See §3.1. |
+| Pages | Create, rename, move between books and sections, archive (hidden from normal views, kept in place), delete (to system Trash). Autosave. |
+| Links | `[[Page]]`, `[[Book/Section]]` and `[[Book]]` links with autocomplete while typing; click to open. A **backlinks** panel shows what links to the current page. Renaming a page or section updates links pointing to it, with a confirmation showing how many pages change. |
+| Tasks & reminders | Tasks are Markdown checkboxes in any page or loose note. Any task, or a whole page, can have a **timed reminder** (date and time, optional simple repeat: daily, weekly, monthly, yearly), delivered as a native notification. A **Tasks & Reminders** view gathers open tasks and upcoming reminders from every page. Location reminders come in v2. |
+| Editor | Live preview: headings, bold, italic, strikethrough, inline code, code blocks, links, wiki-links, bullet/numbered lists, task checkboxes (clickable), reminder chips (click to edit with a native date/time picker), quotes, horizontal rules, inline images. Moving into formatted text shows its Markdown. Floating formatting toolbar on text selection. Standard shortcuts, undo/redo, spellcheck. GFM tables are kept exactly and shown as styled source; full table rendering comes after the MVP. |
 | Images | Paste, drag in, or insert an image. It's copied into the vault's `attachments/` folder and inserted as a standard Markdown image link, shown inline. |
 | Tags | `#tag` in text and `tags:` in frontmatter, both recognized. Nested tags (`#travel/japan`). Tag autocomplete. Tag list in the sidebar. |
-| List view | All notes, or notes in a folder or tag. Sort by modified, created or title. Group by date (Today, This week, …). Filter by tag. |
+| List view | All pages, or pages in a book, section, tag or Loose notes. Sort by modified, created or title. Group by date (Today, This week, …). Filter by tag. |
 | Search | Full-text search over titles, content and tags, offline. Command palette (⌘K / Ctrl+K) for search and commands. Find in note (⌘F / Ctrl+F). |
 | Pinned notes | Pin notes to the top of the sidebar. |
 | Origin | Records which device created a note (user-editable device name). |
@@ -41,14 +49,21 @@ This document is the single plan from first commit to MVP release. Coding agents
 | Settings | Vault location, device name, editor text size, attachments folder name. Light/dark follow the system. |
 | Platform basics | Native menus and shortcuts, multiple windows, VoiceOver/Narrator basics, reduced motion, dark mode. |
 
-### 1.2 Explicitly not in the MVP
+### 1.2 Explicitly not in v1
 
-The canvas, the Android app, the sync engine (PSC), reminders, sharing, AI features, shopping lists, iOS, Linux, automatic updates, payments, publishing, and table rendering.
+The canvas and moodboards, the Android app, built-in sync (PSC), location reminders, link saving and bookmarks, sharing, AI features, shopping lists, iOS, Linux, automatic updates, payments, publishing, and table rendering.
 
 ### 1.3 Later versions (direction, not yet specified in detail)
 
-- **v2:** desktop canvas (pan/zoom, cards, groups, stacks) on Mac and Windows; Android app (Compose + Material 3 + Motion UI) with a list-first layout; first real sync via PSC; auto-updates for testers.
-- **v3:** date/time reminders, small-group sharing, optional AI actions (read-only first), iOS app, shopping lists.
+- **v2:**
+  - Sync through **PSC**: sign in to Google Drive, everything stored in a `Commonplace` folder there. GitHub as the second provider.
+  - Desktop canvas (pan/zoom, cards, groups, stacks) on Mac and Windows, and **moodboards** as a canvas page type. Candidate file format: the open JSON Canvas format, to be verified.
+  - **Android app** (Compose + Material 3 + Motion UI) with a list-first layout.
+  - **Location reminders**.
+  - **Link saving:** research how Craft saves and previews links, and design Commonplace's version.
+  - Auto-updates for testers.
+- **v3:** small-group sharing, optional AI actions (read-only first), iOS app, shopping lists.
+- **PSC track (runs in parallel with v1, in the PSC repository):** see §10, phase P.
 - Each version gets its own detailed plan section, written and approved before its coding starts, in the same format as this one.
 
 ---
@@ -76,10 +91,10 @@ The canvas, the Android app, the sync engine (PSC), reminders, sharing, AI featu
 
 | Component | Language / framework | Owns | Must not |
 |---|---|---|---|
-| `core/` | Rust (stable), UniFFI bindings | Vault scanning, reading and writing notes and attachments, frontmatter, IDs, tag/link extraction, search index, conflict detection, version history, file watching, workspace metadata | Know about any UI; make network calls |
+| `core/` | Rust (stable), UniFFI bindings | Vault scanning, reading and writing notes and attachments, books and sections, frontmatter, IDs, tag/link/task/reminder extraction, link updates on rename, search index, conflict detection, version history, file watching, workspace metadata, a `SyncPort` interface (no-op in v1; PSC plugs in here in v2) | Know about any UI; make network calls in v1; schedule notifications (the native app does that) |
 | `editor/` | TypeScript + CodeMirror 6, bundled with Vite | Text editing, live preview, formatting toolbar, tag autocomplete UI, bridge messages | Touch the file system; make network calls; load remote resources |
-| `apps/macos/` | Swift + SwiftUI (AppKit only where SwiftUI lacks a capability), WKWebView for the editor | App shell, navigation, list, sidebar, palette, settings, menus, accessibility, bridging core ↔ editor | Contain business logic that belongs in core |
-| `apps/windows/` | C# + WinUI 3 (Windows App SDK), WebView2 for the editor | Same as macOS, for Windows | Same |
+| `apps/macos/` | Swift + SwiftUI (AppKit only where SwiftUI lacks a capability), WKWebView for the editor | App shell, navigation, list, sidebar, palette, settings, menus, accessibility, bridging core ↔ editor, scheduling reminder notifications (UserNotifications) | Contain business logic that belongs in core |
+| `apps/windows/` | C# + WinUI 3 (Windows App SDK), WebView2 for the editor | Same as macOS, for Windows; reminders use Windows scheduled app notifications (exact API checked in task 5.3) | Same |
 | `apps/android/` | Kotlin + Jetpack Compose + Material 3 + Motion UI | **v2** | — |
 
 ### 2.2 Key technical decisions
@@ -94,7 +109,14 @@ Each entry is recorded in [DECISIONS.md](DECISIONS.md) with its reasoning.
 6. **Stable IDs in frontmatter** (`id:` using UUIDv7) for notes created by Commonplace. Existing notes get an ID only when the user edits them in Commonplace. The app never rewrites files just because it opened them.
 7. **No servers and no network access in the MVP.** No telemetry and no accounts. The WebView has a strict content security policy and a local-only content source.
 8. **Text-based project files so AI can edit them safely.** The Mac project is generated from `project.yml` with XcodeGen, because AI must never hand-edit `.pbxproj`. The Windows project uses SDK-style `.csproj` files.
-9. **Monorepo.** All components live in this repository and are versioned together.
+9. **Monorepo.** All components live in this repository and are versioned together. PSC is the exception: it's a separate repository and is consumed as a pinned dependency from v2.
+10. **Organization maps 1:1 to folders.** Books and sections are real folders, so the library stays portable. The app adds only ordering, colors and icons, stored in workspace metadata.
+11. **Reminders are stored in the Markdown text and scheduled by the native app.**
+    - The core extracts reminders into the index.
+    - The native app schedules the nearest upcoming reminders with the operating system. How many is set in one config place, because systems limit pending notifications.
+    - The app reschedules on launch and whenever reminders change.
+    - Reminders fire even when the app is closed.
+    - If the library is in a cloud folder open on two computers, both computers notify. That's acceptable in v1; v2 sync can add de-duplication.
 
 ### 2.3 Repository layout
 
@@ -130,16 +152,24 @@ Each entry is recorded in [DECISIONS.md](DECISIONS.md) with its reasoning.
 ### 3.1 Vault layout
 
 ```
-MyVault/
-  Some note.md
-  Travel/Japan trip.md
-  Archive/Old idea.md
+MyLibrary/
+  Groceries idea.md                 ← loose note (no book)
+  Travel/                           ← book
+    Japan/                          ← section
+      Kyoto plan.md                 ← page
+    Packing list.md                 ← page directly in a book
+  Recipes/                          ← book
   attachments/2026-11-28-143012-a1b2.png
   .commonplace/
-    workspace.json     pinned notes, saved list views (portable, small, sync-safe)
+    workspace.json     pinned pages, book/section order, colors/icons, saved views (portable, small, sync-safe)
     devices.json       device labels (id → human name)
 ```
 
+- **Mapping:**
+  - Top-level folders are **books**. Folders inside books are **sections**, and nesting is allowed.
+  - `.md` files are **pages**. `.md` files at the top level are **loose notes**.
+  - Reserved top-level names (`attachments/` and hidden folders) are never shown as books.
+- **Archive:** archiving a page sets `archived: true` in its frontmatter, so it keeps its place in its book. Archived pages are hidden from normal views and shown in an Archive view.
 - `attachments/`: the folder name is configurable per vault and stored in `workspace.json`.
 - Attachment filenames follow the pattern `YYYY-MM-DD-HHMMSS-<4 random hex>.<ext>`, which keeps them unique across devices without a central counter.
 - Hidden folders such as `.obsidian/`, `.git/` and `.trash/` are ignored. Commonplace never touches them.
@@ -150,7 +180,9 @@ MyVault/
 - Supported extensions:
   - YAML frontmatter.
   - `#tags`: letters, digits, `_`, `-`, `/`. They must start with a non-digit and don't count inside code.
-  - Wiki-links `[[Note]]`: recognized and indexed, rendered as links only after the MVP. Text is kept exactly.
+  - **Wiki-links:** `[[Page]]`, `[[Page|shown text]]`, `[[Book/Section/Page]]` (path form when names are ambiguous), `[[Book]]` and `[[Book/Section]]` (links to a book or section). Obsidian-compatible. Resolution: an exact path first, then a unique page name, otherwise the link is shown as ambiguous.
+  - **Reminders on tasks:** `- [ ] Call mom ⏰ 2026-12-01 09:00`, with an optional repeat: `🔁 every week`. This follows the Obsidian Tasks and Reminder plugin conventions; task 0.2 verifies the exact syntax so files stay compatible. Times are local wall-clock time; the device's time zone applies.
+  - **Page reminder:** frontmatter `remind: 2026-12-01T09:00`.
 - **Anything unknown is kept byte-for-byte.** The core never re-serializes Markdown. It edits only frontmatter keys it owns, using minimal text edits that leave every other key, comment and its order untouched.
 - Line endings and encoding: files are read as UTF-8 (a BOM is accepted and kept) and the existing line-ending style is kept. New files use LF.
 
@@ -162,6 +194,8 @@ id: 0193a1b2-...        # UUIDv7, stable across rename/move
 created: 2026-11-28T14:30:12-06:00   # ISO 8601 with offset
 created_on: dev_7f3c... # device id; human label resolved via .commonplace/devices.json
 tags: [recipes, travel/japan]
+archived: true          # only when archived
+remind: 2026-12-01T09:00 # only when a page-level reminder is set
 ---
 ```
 
@@ -189,7 +223,10 @@ Main types: `Vault`, `NoteMeta { id, path, title, created, modified, tags, pinne
 | Function group | Functions |
 |---|---|
 | Vault | `open_vault(path)`, `close`, `rebuild_index`, `subscribe(events)` |
-| Notes | `list_notes(query: ListQuery)`, `read_note`, `create_note(folder, title)`, `save_note(id, text, base_hash)`, `rename_note`, `move_note`, `archive_note`, `trash_note` |
+| Books and sections | `list_books`, `create_book`, `create_section`, `rename_container` (updates links), `move_container`, `reorder`, `set_book_style(color, icon)` |
+| Notes | `list_notes(query: ListQuery)`, `read_note`, `create_note(container or loose, title)`, `save_note(id, text, base_hash)`, `rename_note` (with link-update preview), `move_note`, `archive_note`, `trash_note` |
+| Links | `resolve_link(text)`, `suggest_links(prefix)`, `backlinks(id)` |
+| Tasks and reminders | `list_tasks(filter)`, `upcoming_reminders(window, limit)`, `set_reminder(note_id, task_line, datetime, repeat)`, `complete_task` (each is a minimal text edit) |
 | Attachments | `add_attachment(note_id, bytes, ext)` |
 | Tags | `list_tags`, `suggest_tags(prefix)` |
 | Search | `search(text, limit)` |
@@ -204,8 +241,8 @@ All messages are JSON with `type` and a schema version. The bridge is defined on
 
 | Direction | Messages |
 |---|---|
-| Native → editor | `load {text, noteId, readOnly}`, `theme {colors, font, size}`, `focus`, `command {name}` (bold, heading, …), `tagSuggestions {items}`, `attachmentInserted {path}` |
-| Editor → native | `ready`, `changed {text, version}`, `requestTagSuggestions {prefix}`, `pasteImage {base64, mime}`, `openLink {href}`, `selectionFormatState {…}` |
+| Native → editor | `load {text, noteId, readOnly}`, `theme {colors, font, size}`, `focus`, `command {name}` (bold, heading, …), `tagSuggestions {items}`, `linkSuggestions {items}`, `linkResolved {target, state}`, `attachmentInserted {path}`, `reminderSet {line, datetime, repeat}` |
+| Editor → native | `ready`, `changed {text, version}`, `requestTagSuggestions {prefix}`, `requestLinkSuggestions {prefix}`, `pasteImage {base64, mime}`, `openLink {href}` (web links open in the browser; wiki-links open in the app), `editReminder {line}` (native shows the date/time picker), `selectionFormatState {…}` |
 
 The editor never receives file paths outside the vault and never makes network requests.
 
@@ -329,14 +366,17 @@ Legend: ☁️ cloud · 🍎 owner's Mac · 🪟 owner's Windows PC · 🔒 data
 | 1.2 | 🔒 Vault scan + safe read (UTF-8/BOM/line endings) + atomic write | Round-trip on all fixtures is byte-identical |
 | 1.3 | 🔒 Frontmatter: read; minimal-edit owned keys; preserve everything else | Property tests: unknown keys/comments/order preserved |
 | 1.4 | IDs and `created`/`created_on` assignment rules (§2.2-6) | Opening never modifies a file; first edit assigns an ID |
-| 1.5 | Tag and link extraction (pulldown-cmark); ignore code | Tests over fixtures |
+| 1.5 | Tag, wiki-link, task and reminder extraction (pulldown-cmark); ignore code | Tests over fixtures |
 | 1.6 | SQLite index + FTS5 search; incremental rebuild by size/mtime/hash | 10k vault meets the §7 budgets |
 | 1.7 | 🔒 Save with `base_hash` conflict detection + conflict copies; detect cloud conflict-copy files | Conflict tests pass; never overwrites |
 | 1.8 | 🔒 Version history store + restore + retention | Tests incl. retention limits |
-| 1.9 | Create/rename/move/archive/trash; name validation per OS | Cross-platform name tests |
+| 1.9 | Books/sections/loose-note mapping; create/rename/move/archive/trash for pages and containers; name validation per OS | Cross-platform name tests |
+| 1.9b | 🔒 Link resolution, backlinks, link update on rename (preview + minimal edits) | Tests: only link text changes; ambiguous links reported |
+| 1.9c | Tasks and reminders: list, set, complete, repeat rules, upcoming-reminder query (time-zone aware) | Tests incl. time-zone/DST changes |
 | 1.10 | Attachments: add, unique naming, vault-bounded path resolution | Path-escape tests (`../`) rejected |
 | 1.11 | File watcher → events; debounced; handles bulk changes | Tests with simulated external edits |
-| 1.12 | Workspace metadata (pins, device labels) with merge rule | Merge tests |
+| 1.12 | Workspace metadata (pins, book/section order, colors/icons, device labels) with merge rule | Merge tests |
+| 1.12b | `SyncPort` interface with a no-op implementation, shaped by PSC task P.2 | Core works with the no-op; interface documented |
 | 1.13 | UniFFI layer + generated Swift and Kotlin bindings build in CI; C# generation smoke test | Bindings generated in CI |
 
 ### Phase 2 — Editor (☁️ fully, tested with Playwright)
@@ -350,19 +390,21 @@ Legend: ☁️ cloud · 🍎 owner's Mac · 🪟 owner's Windows PC · 🔒 data
 | 2.4 | Inline images via `cp-asset://`; paste/drag sends `pasteImage` | Tests with mock host |
 | 2.5 | Floating formatting toolbar + keyboard shortcuts; accessible (ARIA, keyboard reachable) | a11y checks pass (axe) |
 | 2.6 | Tag autocomplete; find-in-note; spellcheck on; theme from native message | Tests |
+| 2.6b | Wiki-links: render, autocomplete (`[[`), click to open, ambiguous state; reminder chips (`⏰`) with `editReminder` | Tests with mock host |
 | 2.7 | 🔒 Round-trip guarantee: loading and editing never change untouched text; large-note performance | Property tests over fixtures; typing budget met |
 
 ### Phase 3 — macOS app (🍎, Sonnet in Claude Code on the owner's Mac)
 
 | # | Task | Acceptance |
 |---|---|---|
-| 3.0 | 👤 Screen list + low-fidelity mockups (sidebar, list, editor, palette, settings, conflict banner, onboarding) | Owner approves |
+| 3.0 | 👤 Screen list + low-fidelity mockups (sidebar with books/sections/loose notes, list, editor, backlinks, Tasks & Reminders view, reminder picker, palette, settings, conflict banner, onboarding) | Owner approves |
 | 3.1 | XcodeGen app shell, link Rust core (XCFramework build script), bundle editor | App launches; CI builds it |
 | 3.2 | Onboarding: choose/create vault (security-scoped bookmark so access persists) | Reopens vault after restart |
-| 3.3 | Sidebar (folders, tags, pinned) + list view (sort, group, filter) | UI tests |
+| 3.3 | Sidebar (books, sections, loose notes, tags, pinned; reorder, colors/icons) + list view (sort, group, filter) | UI tests |
 | 3.4 | Editor host: WKWebView, bridge, `cp-asset://` handler, save flow, theme sync | Edit → file on disk updated |
 | 3.5 | Conflict banner + compare/keep both; version history window | Manual + UI tests |
-| 3.6 | Note actions (new, rename, move, archive, trash, pin) with menus and shortcuts | UI tests |
+| 3.6 | Page/book/section actions (new, rename with link-update confirm, move, archive, trash, pin) with menus and shortcuts; backlinks panel | UI tests |
+| 3.6b | Reminders: notification permission flow, scheduling and rescheduling, native date/time picker, Tasks & Reminders view, mark done from the notification | Manual checklist + unit tests |
 | 3.7 | Command palette + global search | Keyboard-only flow works |
 | 3.8 | Settings window; device name; multiple windows | Manual checklist |
 | 3.9 | Accessibility pass (VoiceOver, keyboard), dark mode, reduced motion | Checklist complete |
@@ -382,10 +424,19 @@ Legend: ☁️ cloud · 🍎 owner's Mac · 🪟 owner's Windows PC · 🔒 data
 | 5.0 | Windows-specific screen adjustments (Fluent conventions) for owner approval | 🪟👤 | Approved |
 | 5.1 | C# bindings via `uniffi-bindgen-cs` (fallback per §2.2-1) + WinUI shell + bundled editor | 🪟 | App launches; CI builds |
 | 5.2 | Vault picker, sidebar, list, editor host (WebView2 virtual host), save/conflict flow | 🪟 | Same tests as Mac |
-| 5.3 | Actions, palette, search, settings, accessibility (Narrator), dark mode | 🪟 | Checklist complete |
+| 5.3 | Actions, links/backlinks, palette, search, settings, reminders (scheduled app notifications), accessibility (Narrator), dark mode | 🪟 | Checklist complete |
 | 5.4 | Cross-platform test: same vault in OneDrive/iCloud edited on Mac and Windows | 👤 | No lost text; conflicts shown |
 
-### Phase 6 — MVP release 0.1.0
+### Phase P — PSC foundation (parallel track, in the PSC repository; does not block v1)
+
+| # | Task | Where | Acceptance |
+|---|---|---|---|
+| P.1 | 👤 PSC decisions (Opus planning session): language (Rust, to match the Commonplace core), scope for Commonplace-first, folder layout `Commonplace/` on the provider, auth model, conflict and tombstone rules | ☁️ | PSC decision register updated and approved |
+| P.2 | PSC↔Commonplace contract: what `SyncPort` exchanges (files and attachments, workspace metadata), versioning | ☁️ | Contract doc in both repos |
+| P.3 | Google Drive proof of concept: OAuth sign-in (desktop, PKCE), `drive.file` scope, create and use the `Commonplace` folder, upload/download, change feed, interrupted-upload and concurrent-edit tests | ☁️ + 🍎 | PoC passes the PSC test matrix |
+| P.4 | Write the v2 sync plan from the PoC results | ☁️ (Opus) | Approved; feeds the v2 plan |
+
+### Phase 6 — v1 release 0.1.0
 
 | # | Task | Where | Acceptance |
 |---|---|---|---|
@@ -398,8 +449,9 @@ Legend: ☁️ cloud · 🍎 owner's Mac · 🪟 owner's Windows PC · 🔒 data
 
 | Item | Needed by | Notes |
 |---|---|---|
-| Repository public or private | Task 0.5 | Private repos have limited free CI minutes, and macOS minutes count extra. If minutes run short, the Mac builds run on your own Mac instead of in CI. |
+| Repository visibility | — | Decided: public. CI is free. |
 | Apple Developer account (US$99/yr) | Task 6.2 | Needed only to share Mac builds with other people without security warnings. |
 | Live-preview implementation choice | Task 2.0 | Research spike decides it. |
 | Business model, pricing, code license, auto-updates | Before any public release | Research brief ready: [OPUS_RESEARCH_BRIEF.md](OPUS_RESEARCH_BRIEF.md) (an Opus task). Does not affect MVP code. |
-| PSC integration contract | v2 planning | The MVP doesn't depend on PSC; the core keeps the sync logic isolated so it can plug in later. |
+| PSC repository access for coding sessions | Task P.1 | PSC sessions need write access to that repository. |
+| Book colors/icons set | Task 3.0 | Use system symbols; your own art optional. |

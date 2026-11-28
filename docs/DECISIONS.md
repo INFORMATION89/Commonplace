@@ -25,11 +25,11 @@ Each entry: date, decision, why, alternatives, consequences, status. Changing an
 - **Alternatives:** Fully native editors per platform. That's months of high-risk work per platform.
 - **Consequences:** A narrow, documented exception to the "no web views" rule (rules.md §7). Requirements: no network, a strict CSP, vault-bounded asset serving, and a theme that matches the native app.
 
-## D-004 — MVP scope: notes, images, tags, search, list; canvas and Android in v2 (2026-11-28, Accepted)
+## D-004 — v1 scope: notes, images, tags, search, list; canvas and Android in v2 (2026-11-28, Accepted; extended by D-010, D-011)
 - **Decision:** See DEVELOPMENT_PLAN.md §1.
 - **Why:** The owner wants a usable product sooner. Image attachments are included and stored as plain files, so they work with any synced folder now and with real sync later.
 
-## D-005 — Folder-based cross-device use in MVP; real sync (PSC) in v2 (2026-11-28, Accepted)
+## D-005 — Folder-based cross-device use in v1; real sync (PSC) in v2 (2026-11-28, Accepted; confirmed by D-012)
 - **Decision:** In the MVP, the vault is a normal folder. It may sit inside iCloud Drive, OneDrive or Dropbox. The core detects external changes and conflict copies and never overwrites silently.
 - **Why:** This gives Mac↔Windows use immediately without building a sync engine before PSC has a contract.
 
@@ -45,3 +45,27 @@ Each entry: date, decision, why, alternatives, consequences, status. Changing an
 ## D-009 — Development model policy: Sonnet default, Opus by exception (2026-11-28, Accepted)
 - **Decision:** See DEVELOPMENT_PLAN.md §9 and AI_USAGE_POLICY.md §8.1.
 - **Why:** The owner is on a limited plan, so this maximizes progress per session.
+
+## D-010 — Organization: Books → Sections → Pages, plus Loose notes (2026-11-28, Accepted)
+- **Decision:** Top-level folders are books. Folders inside books are sections, and nesting is allowed. Notes are pages. Top-level notes are loose notes for quick capture. Moodboards arrive in v2 as a canvas page type.
+- **Why:** The notebook-shelf model is easy to understand. It maps 1:1 to files on disk, so the library stays portable. Links and tags cover cross-references.
+- **Alternatives:** A plain folder tree, which feels generic. Tags or collections only, which get messy and don't match the disk layout.
+
+## D-011 — Tasks with timed reminders and links in v1; location reminders in v2 (2026-11-28, Accepted)
+- **Decision:**
+  - Tasks are Markdown checkboxes in any page or loose note. Timed reminders are stored in the text (`⏰ date time`) or in frontmatter (`remind:`). The native app schedules them as system notifications.
+  - Wiki-links work between pages, sections and books, with autocomplete, backlinks and link updates on rename.
+- **Why:** Tasks keep their context and quick capture still works. Everything stays plain Markdown, compatible with Obsidian conventions.
+
+## D-012 — PSC built now as a Rust library with Commonplace as first client; Google Drive sync ships in v2, GitHub after (2026-11-28, Accepted)
+- **Decision:**
+  - v1 ships as a complete local app, without built-in sync.
+  - The PSC foundation (decisions, contract, Google Drive proof of concept) runs in parallel in the PSC repository.
+  - In v2, Commonplace signs in through PSC to Google Drive and syncs into a `Commonplace` folder. GitHub is the second provider.
+- **Why:** v1 stays a good app sooner, and PSC gets built properly for the whole app family instead of being rushed.
+- **Consequences:**
+  - The core exposes a `SyncPort` interface, which does nothing in v1.
+  - Under the `drive.file` scope, the app only sees files it created. Files added to the Drive folder by other means stay invisible to it; to be confirmed in task P.3.
+
+## D-013 — v2 research: link saving (2026-11-28, Accepted)
+- **Decision:** Research how Craft saves and previews links before designing Commonplace's link saving for v2.

@@ -9,4 +9,5 @@ Keep this short. Overwrite it at the end of every task.
 
 ## Notes
 - No product code exists yet.
-- Open items needing the owner: repository public or private (needed before task 0.5).
+- The repository is public, so CI builds (including Mac) are free.
+- Plan revised: Books/Sections/Pages, loose notes, timed reminders and links are now in v1. PSC runs as a parallel track (phase P), with sync in v2.
