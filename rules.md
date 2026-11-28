@@ -96,7 +96,7 @@ Do not invent requirements. A proposal in a draft plan is not an approved archit
 6. A custom control must solve a real product need that standard components do not meet.
 7. Support keyboard, pointer, touch, trackpad, screen reader, high contrast, and reduced-motion expectations where relevant to the platform.
 8. Do not claim a platform is supported until build, test, accessibility, distribution, and real-platform validation exist.
-9. A web view wrapped in a native shell is not automatically a native implementation.
+9. A web view wrapped in a native shell is not automatically a native implementation. **Approved exception (D-003):** the note-editing area may host the bundled CodeMirror 6 editor in a system web view (WKWebView/WebView2). It must load only bundled local files, make no network requests, use a strict CSP, serve only vault files, and match native theming. All other UI must be native.
 10. Linux synchronization is conditional, not a release requirement at any cost. Validate real provider access, reliability, background behavior, and maintenance burden. If reliable support is disproportionately difficult or would compromise other platforms, remove Linux from the supported sync matrix. A local-only Linux application is a separate product decision.
 
 ## 8. Motion and tactile interaction

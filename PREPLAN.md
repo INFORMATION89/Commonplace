@@ -1,6 +1,6 @@
 # Commonplace — Pre-plan
 
-**Status:** Initial pre-plan; proposals are not implementation commitments.  
+**Status:** Initial pre-plan; proposals are not implementation commitments. **Superseded where they differ by [docs/DEVELOPMENT_PLAN.md](docs/DEVELOPMENT_PLAN.md) and [docs/DECISIONS.md](docs/DECISIONS.md) (2026-11-28).**  
 **Date:** 2026-11-27  
 **Repository:** https://github.com/INFORMATION89/Commonplace
 

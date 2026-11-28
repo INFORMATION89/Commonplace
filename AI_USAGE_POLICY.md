@@ -133,6 +133,17 @@ For every external provider, check current official documentation, model availab
 11. AI-generated code must be reviewed, tested, and checked for licensing and provenance like any other contribution.
 12. The primary agent remains responsible for validating suggestions from other models.
 
+### 8.1 Owner's development rules (approved 2026-11-28)
+
+- **Sonnet is the default coding model** (set in `.claude/settings.json`). The owner's plan has limited usage, so maximize progress per session.
+- **Opus only when necessary:** architecture changes, data-loss or conflict bugs Sonnet failed to fix twice, independent reviews of 🔒 data-safety tasks, the pre-release review, and planning a new version. See DEVELOPMENT_PLAN.md §9.
+- **One task per session.** Start each task with fresh context and stop when it's done.
+- **No AI-generated art.** The project uses real art. AI may suggest or draw icons, make mockups and give design suggestions.
+- **Treat the owner as a non-programmer.** Make technical decisions within the plan. Bring structural decisions to the owner, with pros and cons in plain language.
+- **No hard-coding and no unplanned new systems.** Research first, consult the owner, then code.
+- **Use standard platform spacing, values, components and design guidelines.** Use the approved libraries.
+- **No vibe coding:** every change is tested, reviewed against acceptance criteria and maintainable.
+
 ## 9. Tool and research economy
 
 Before calling a tool, ask whether its result can change the next decision.

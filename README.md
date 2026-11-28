@@ -4,11 +4,14 @@ A Markdown-first personal knowledge space for notes, moodboards and, reminders.
 
 ## Project status
 
-Pre-planning. The repository is intentionally starting from an empty state; no application framework or platform commitment has been made yet.
+Planning complete for the MVP (see the development plan). Coding starts at Phase 0, task 0.2.
 
 ## Project documents
 
-- [Pre-plan](PREPLAN.md)
+- [Development plan](docs/DEVELOPMENT_PLAN.md) — the plan coding follows
+- [Decision log](docs/DECISIONS.md)
+- [Agent rules](AGENTS.md) · [Current handoff](docs/HANDOFF.md)
+- [Pre-plan](PREPLAN.md) (original direction; superseded where it differs)
 - [Project rules](rules.md)
 - [AI usage and cost policy](AI_USAGE_POLICY.md)
 - [Research and feature comparison](docs/RESEARCH.md)
