@@ -401,5 +401,5 @@ Legend: ☁️ cloud · 🍎 owner's Mac · 🪟 owner's Windows PC · 🔒 data
 | Repository public or private | Task 0.5 | Private repos have limited free CI minutes, and macOS minutes count extra. If minutes run short, the Mac builds run on your own Mac instead of in CI. |
 | Apple Developer account (US$99/yr) | Task 6.2 | Needed only to share Mac builds with other people without security warnings. |
 | Live-preview implementation choice | Task 2.0 | Research spike decides it. |
-| Business model, pricing, code license | Before any public release | Unchanged from the pre-plan; does not affect MVP code. |
+| Business model, pricing, code license, auto-updates | Before any public release | Research brief ready: [OPUS_RESEARCH_BRIEF.md](OPUS_RESEARCH_BRIEF.md) (an Opus task). Does not affect MVP code. |
 | PSC integration contract | v2 planning | The MVP doesn't depend on PSC; the core keeps the sync logic isolated so it can plug in later. |
