@@ -106,6 +106,12 @@ The exact representation (sidecar files, a local index, or both) remains an arch
 
 ### 5.1 Writing and editing
 
+### 5.1.1 Markdown formatting controls
+
+The Markdown editor should also offer convenient floating formatting controls, similar to the contextual formatting toolbars users expect in modern writing applications. These controls should make common formatting actions available without requiring the user to remember Markdown syntax.
+
+This is a product requirement to preserve for UX exploration, not a finalized interaction design. The exact trigger, placement, supported actions, behavior on touch devices, accessibility, and relationship to keyboard shortcuts remain open. The editor must continue to produce portable Markdown and must not hide or silently transform the underlying document format.
+
 - Markdown-first document model.
 - Live rendering by default: headings, emphasis, lists, links, checkboxes, quotes, code, and supported extensions render in place.
 - Selecting or editing a formatted region should expose the underlying Markdown naturally, following the Live Preview model.
@@ -352,8 +358,29 @@ This is a suggested sequence, not a committed calendar. Dates should be set only
 - Decide what the first shared-group model means.
 - Record provider, privacy, security, and licensing decisions.
 - Define the minimum data/provenance contract for optional AI operations (user-authorized scope, source document version, included/excluded fragments, and generated-content authorship) without prematurely selecting their UX.
+- Ask Opus to review the proposed trial/base-license/per-platform pricing hypothesis and identify commercial, licensing, payment-platform, and regional-pricing constraints before any implementation.
+- Research and prototype secure platform-appropriate automatic updates and a maintainable in-app roadmap feed before external alpha/beta distribution.
 
 **Exit:** architecture decisions are written, PSC's permanently decentralized boundary is documented, the desktop-first/native architecture is validated by small prototypes, the first desktop OS is selected with evidence, and the first milestone has measurable acceptance criteria.
+
+### Release distribution, automatic updates, and tester experience
+
+Before inviting external alpha or beta testers, investigate a reliable update mechanism so testers can receive new builds without visiting GitHub, downloading artifacts manually, or following developer workflows.
+
+The release/update design should evaluate:
+
+- Platform-native distribution and update mechanisms where they provide the best user experience.
+- A signed release manifest and signed application packages; verify update authenticity and integrity before installation.
+- Update channels such as internal/dev, alpha, beta, and stable, with clear channel enrollment and switching.
+- Version and platform compatibility checks, staged rollout, failure reporting, and a safe recovery or rollback strategy where supported.
+- User control over update timing, restart requirements, bandwidth, and release notifications.
+- How updates behave with local data, migrations, interrupted downloads, and older supported versions.
+- Code-signing, notarization, store policies, and platform-specific limitations.
+- A release pipeline that publishes builds and metadata without requiring testers to access repository internals.
+
+Do not assume one updater can work identically across every operating system. Select and validate the approach per platform, prioritizing secure updates and data safety over convenience. Automatic updates should be transparent and controllable; they must not silently change user data or bypass required platform consent.
+
+The app should also provide a discoverable **What's planned** / **Coming next** area so testers can understand the product direction and see upcoming work. Investigate whether this should be driven by a small versioned roadmap/release-feed document shipped with the app or another maintainable source. Distinguish planned, in progress, testing, shipped, and deferred items; avoid promises or dates that the team cannot support. This is a product requirement to investigate, not a finalized screen design.
 
 ### Phase 1 — Local-first MVP / internal alpha
 
@@ -434,6 +461,19 @@ Use Semantic Versioning once public compatibility promises exist:
 
 Commonplace may launch as a paid app, a one-time purchase, a paid upgrade, or eventually a subscription/service. The business model is undecided. Keep the option to charge for the app open; do not assume that Commonplace must be free or freemium. No pricing, billing cadence, tier boundary, or payment provider is approved yet.
 
+### 12.1. Pricing hypothesis to investigate (not approved)
+
+A possible model for evaluation is a short free trial followed by a low-cost base license and inexpensive per-platform unlocks:
+
+- Offer a **14-day free trial** so people can use the app before purchasing.
+- After the trial, a one-time payment of approximately **US$2** would purchase the base Commonplace license: access to the app's core experience and the underlying Commonplace system, with a limited platform entitlement.
+- Additional platform entitlements would be approximately **US$1 per platform**.
+- The target is for the complete set of platform licenses to cost **less than US$10 in total**.
+
+All amounts are illustrative, not final prices or commitments. The meaning and scope of the limited base license, what counts as a platform, whether purchases transfer across devices, how reinstalls and device changes work, regional pricing, taxes, refunds, store fees, trial eligibility, and long-term maintenance funding require investigation.
+
+Ask Opus to independently assess this proposal before any pricing or licensing architecture is selected. The review should compare the model with simpler alternatives, test whether the platform add-on structure is understandable and commercially viable, identify app-store and payment-policy constraints, and estimate sustainable net revenue after fees and taxes. Preserve the principle that users retain their files, Markdown portability, and access to their own data regardless of license status. Do not implement payments or entitlement enforcement based on these illustrative numbers.
+
 Before committing to a model or building payment infrastructure, produce a documented commercial-feasibility assessment. Compare plausible models against the product's audience, expected value, alternatives, distribution channels and long-term costs. Evaluate, where relevant, paid-up-front licensing, one-time purchase, paid major upgrades, optional subscriptions tied to ongoing value, paid add-ons, and support or business licensing. Do not assume every model is suitable.
 
 The assessment must distinguish one-time development costs from recurring costs and include development and maintenance; security updates; platform-specific testing; customer support and localization; distribution and payment processing fees; refunds and applicable tax/consumer obligations in target markets; third-party API, provider, data, model and AI usage costs; rate limits and price changes; and realistic usage scenarios. Keep external provider costs distinct from PSC-operated infrastructure: PSC will not operate a hosted service, relay, or managed storage to support a revenue model.
@@ -472,11 +512,12 @@ Do not silently decide these during implementation:
 7. **Mobile canvas:** full canvas, simplified canvas, or list-first mobile navigation with canvas as an alternate view.
 8. **Shopping-list scope:** whether its first version is just a structured list or also supports store/location and price history.
 9. **Business model and commercial viability:** compare paid app, one-time purchase, paid upgrade, subscription, add-ons, support and other suitable models; assess costs and obligations before selecting one.
-10. **Commonplace and PSC licenses:** choose the license and distribution model for each project's own code only after reviewing business goals, contribution model, dependency compatibility and commercial implications.
-11. **Allowed resource policy:** approve the inventory and rules for code, SDKs, APIs, fonts, icons, media, datasets, AI models, generated outputs and other third-party materials.
-12. **PSC local execution and adapter model:** decide which coordination components belong in each app, which may run as user-controlled local components, and how platform adapters communicate without a central service.
-13. **PSC capability scope:** decide which decentralized capabilities are in scope (for example, provider discovery, device metadata, synchronization status and event routing) and define their local/provider-based contracts.
-14. **PSC content protection:** define encryption, metadata exposure, key recovery, provider/token ownership and revocation for user-selected storage paths. A hosted PSC relay or managed storage service is not an available option.
+10. **Trial and platform licensing:** evaluate the illustrative 14-day trial, approximately US$2 base license and approximately US$1 per additional platform, targeting a complete package below US$10. No prices or entitlement rules are approved.
+11. **Commonplace and PSC licenses:** choose the license and distribution model for each project's own code only after reviewing business goals, contribution model, dependency compatibility and commercial implications.
+12. **Allowed resource policy:** approve the inventory and rules for code, SDKs, APIs, fonts, icons, media, datasets, AI models, generated outputs and other third-party materials.
+13. **PSC local execution and adapter model:** decide which coordination components belong in each app, which may run as user-controlled local components, and how platform adapters communicate without a central service.
+14. **PSC capability scope:** decide which decentralized capabilities are in scope (for example, provider discovery, device metadata, synchronization status and event routing) and define their local/provider-based contracts.
+15. **PSC content protection:** define encryption, metadata exposure, key recovery, provider/token ownership and revocation for user-selected storage paths. A hosted PSC relay or managed storage service is not an available option.
 
 Record the answers in a decision log before implementing the affected architecture.
 
