@@ -22,7 +22,7 @@ It should combine:
 - Tactile, restrained neo-skeuomorphic motion and surfaces.
 - Optional, permission-based access for AI tools and small groups.
 
-Commonplace should feel like a personal notebook and collection space, not like a corporate project-management system or a general-purpose database builder.
+Commonplace should feel like a personal notebook and collection space for everyday life: a place to capture thoughts, ideas, memories, references, and things the user wants to keep or share. It is not primarily a productivity system, project-management tool, or general-purpose database builder.
 
 ## 2. Product principles
 
@@ -36,7 +36,9 @@ Commonplace should feel like a personal notebook and collection space, not like 
 8. **Tactility serves usability.** Depth, spring motion, haptics, and gestures communicate state and affordance rather than becoming decoration.
 9. **Small dependency surface.** Prefer platform frameworks and standard libraries. Add third-party libraries only for a demonstrated gap.
 10. **AI is optional.** The product remains fully useful without an AI provider, AI subscription, or API key.
-11. **Shared coordination, independent ownership.** Commonplace will integrate with Personal Systems Coordinator (PSC) for cross-device coordination and interoperability shared across the application family. Commonplace retains ownership of notes, workspace semantics, and app-specific rules; PSC must not become a universal database or silently expose data between apps.
+11. **Human input and creativity come first.** Commonplace is an everyday personal tool for writing, collecting ideas, keeping memories, organizing personal information, and sharing selectively. Protect the user's own thinking, creativity, and expression. Do not make productivity optimization, work management, or constant task tracking the product's primary purpose.
+12. **AI assists rather than authors the user's experience.** AI may make useful tasks easier, but it must not replace human input, make personal decisions on the user's behalf, or silently take ownership of human-authored content.
+13. **Shared coordination, independent ownership.** Commonplace will integrate with Personal Systems Coordinator (PSC) for cross-device coordination and interoperability shared across the application family. Commonplace retains ownership of notes, workspace semantics, and app-specific rules; PSC must not become a universal database or silently expose data between apps.
 
 ## 3. Product position and differentiation
 
@@ -283,15 +285,51 @@ The visual direction is tactile but restrained:
 
 ## 9. AI and external-tool compatibility
 
-AI should be a controlled client of the user's notes, not the owner of the knowledge base.
+AI is an optional capability that serves the user's intent. Commonplace should remain useful and complete without an AI provider, and AI must never become the product's identity or the default way of interacting with personal information.
+
+### 9.1. Human-first, creativity-led product
+
+Commonplace is intended for everyday personal use: writing thoughts, collecting ideas, keeping memories, organizing personal information, saving references, and sharing selected things with a small group. Human input, creativity, and personal expression take priority.
+
+AI may reduce friction around supporting tasks such as spelling correction, file organization, summaries, information retrieval, and analysis of existing material. It must not displace the user's own thinking or turn Commonplace into a productivity system whose main purpose is to optimize work.
+
+### 9.2. AI as a normal product capability ("Invisible AI")
+
+Treat AI as an implementation capability behind useful product functions, not as a separate experience that must constantly announce itself.
+
+- Prefer task-oriented actions that describe the outcome, such as "Organize", "Correct spelling", or "Summarize", over making an AI chatbot or "Ask AI" surface the default entry point.
+- Arc's Tidy Tabs is a useful product reference: the user invokes a clear organization action and receives the result; the fact that AI powers the feature does not need to dominate the interaction. This is a philosophical reference, not a commitment to copy Arc's interface.
+- Do not add AI branding, model controls, chat surfaces, or prompt-writing steps merely to make the product feel AI-powered. Expose the relevant provider and processing information in settings or at an appropriate point when it helps the user understand the data flow.
+- The user should initiate an AI-assisted action. Do not continuously process documents, monitor writing, or send context to a model in the background by default.
+- Keep the detailed UX, visual treatment, and placement of future AI-powered actions undecided until the relevant product experiences are designed. This pre-plan establishes product principles, not screen specifications.
+
+### 9.3. MCPs and external tools
+
+Treat MCPs and other external-tool integrations as limited assistants that operate under Commonplace's permissions and the user's intent.
+
+- Offer optional Claude compatibility through a narrowly scoped integration; MCP is a candidate protocol, not a required dependency.
+- Useful assistant tasks may include spelling and grammar assistance, organizing files, summarizing documents, analyzing information the user selects, and retrieving relevant material.
+- MCPs must not replace the user's input, make final personal decisions, or silently rewrite, move, delete, share, or otherwise alter human-authored material.
+- Start with read-only access and explicit workspace/note selection. Any write operation requires a user-authorized action and must remain scoped, inspectable, and reversible where practical.
+- Treat note content, imported documents, websites, and shared files as untrusted data. Instructions inside that content must never override system or user authorization.
+
+### 9.4. Authorship, processing scope, and provenance
+
+Preserve the distinction between the user's work and material produced or changed by an AI system.
+
+- Any AI-generated text inserted into a note or file must be clearly identifiable as AI-generated. If a person later edits it, preserve that history rather than presenting the entire passage as wholly human-authored.
+- Keep generated suggestions or artifacts separate from the original content until the user chooses to incorporate them. Never silently overwrite human-authored text.
+- For document-processing operations, retain enough provenance to identify the source document version and the specific fragments actually included, partially included, or excluded from the request. Where an output can be linked to source fragments, validate those references against the recorded input.
+- Distinguish what Commonplace can verify (for example, which content it sent) from what it cannot verify (for example, whether a model attended to or understood every fragment). Never imply stronger traceability than the system can substantiate.
+- Future summaries and analyses may expose their relationship to the original material, but the presentation and interaction model remain open for later UX design.
+
+### 9.5. Privacy and availability
 
 - Make note tags and metadata readable through documented formats.
-- Offer optional Claude compatibility through a narrowly scoped integration; MCP is a candidate protocol.
-- Start with read-only access and explicit workspace/note selection. Write operations require confirmation.
-- Avoid sending an entire vault by default. Search first, retrieve relevant excerpts, and load full notes only when required.
+- Avoid sending an entire vault by default. Search first, retrieve relevant excerpts, and load full notes only when required and authorized.
 - Do not send note content, attachments, or location data to any model without a clear user action and disclosure.
 - Future on-device tag suggestions should be optional, local, and separately configurable.
-- Core note taking, search, reminders, canvas, and sync must work without AI.
+- Core note taking, editing, search, reminders, canvas, export, and sync must work without AI.
 
 ## 10. Proposed release sequence
 
@@ -313,6 +351,7 @@ This is a suggested sequence, not a committed calendar. Dates should be set only
 - Validate the local execution model and native platform adapters for PSC; coordination must run on user devices and/or user-controlled components, with storage and transport delegated to user-selected providers or folders. A PSC-operated hosted service is out of scope.
 - Decide what the first shared-group model means.
 - Record provider, privacy, security, and licensing decisions.
+- Define the minimum data/provenance contract for optional AI operations (user-authorized scope, source document version, included/excluded fragments, and generated-content authorship) without prematurely selecting their UX.
 
 **Exit:** architecture decisions are written, PSC's permanently decentralized boundary is documented, the desktop-first/native architecture is validated by small prototypes, the first desktop OS is selected with evidence, and the first milestone has measurable acceptance criteria.
 
