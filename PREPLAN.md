@@ -513,11 +513,11 @@ Do not silently decide these during implementation:
 8. **Shopping-list scope:** whether its first version is just a structured list or also supports store/location and price history.
 9. **Business model and commercial viability:** compare paid app, one-time purchase, paid upgrade, subscription, add-ons, support and other suitable models; assess costs and obligations before selecting one.
 10. **Trial and platform licensing:** evaluate the illustrative 14-day trial, approximately US$2 base license and approximately US$1 per additional platform, targeting a complete package below US$10. No prices or entitlement rules are approved.
-10. **Commonplace and PSC licenses:** choose the license and distribution model for each project's own code only after reviewing business goals, contribution model, dependency compatibility and commercial implications.
-11. **Allowed resource policy:** approve the inventory and rules for code, SDKs, APIs, fonts, icons, media, datasets, AI models, generated outputs and other third-party materials.
-12. **PSC local execution and adapter model:** decide which coordination components belong in each app, which may run as user-controlled local components, and how platform adapters communicate without a central service.
-13. **PSC capability scope:** decide which decentralized capabilities are in scope (for example, provider discovery, device metadata, synchronization status and event routing) and define their local/provider-based contracts.
-14. **PSC content protection:** define encryption, metadata exposure, key recovery, provider/token ownership and revocation for user-selected storage paths. A hosted PSC relay or managed storage service is not an available option.
+11. **Commonplace and PSC licenses:** choose the license and distribution model for each project's own code only after reviewing business goals, contribution model, dependency compatibility and commercial implications.
+12. **Allowed resource policy:** approve the inventory and rules for code, SDKs, APIs, fonts, icons, media, datasets, AI models, generated outputs and other third-party materials.
+13. **PSC local execution and adapter model:** decide which coordination components belong in each app, which may run as user-controlled local components, and how platform adapters communicate without a central service.
+14. **PSC capability scope:** decide which decentralized capabilities are in scope (for example, provider discovery, device metadata, synchronization status and event routing) and define their local/provider-based contracts.
+15. **PSC content protection:** define encryption, metadata exposure, key recovery, provider/token ownership and revocation for user-selected storage paths. A hosted PSC relay or managed storage service is not an available option.
 
 Record the answers in a decision log before implementing the affected architecture.
 
